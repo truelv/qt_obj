@@ -13,6 +13,7 @@ public:
     void find(LineItem *item, QString &tableName);
     void update();
     void del(LineItem *item);
+    bool hasTable(QString& tableName);
 
 private:
     QSqlDatabase db;

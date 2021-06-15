@@ -15,7 +15,7 @@ TestSqlite3* TestSqlite3::_database = NULL;
 TestSqlite3::TestSqlite3()
 {
     db = QSqlDatabase::addDatabase("QSQLITE", "app");
-    db.setDatabaseName("penson_info.db");
+    db.setDatabaseName("penson_info");
 }
 
 TestSqlite3 *TestSqlite3::getIntent()
@@ -56,6 +56,12 @@ void TestSqlite3::find(LineItem *item, QString &tableName)
             printf("open database failed \n");
             return ;
         }
+    }
+
+    if (!hasTable(tableName)) {
+        printf("database has no table %s \n", tableName.toAscii().data());
+        db.close();
+        return ;
     }
 
     QString sqlstr = QString("select * from %1").arg(tableName);
@@ -139,5 +145,18 @@ void TestSqlite3::del(LineItem *item)
     }
 
     db.close();
+}
+
+bool TestSqlite3::hasTable(QString &tableName)
+{
+    qDebug() << "check table "<< tableName;
+    QStringList tables = db.tables(QSql::Tables);
+    qDebug() << "tables " << tables;
+
+    if (tables.length()>0 && tables.contains(tableName))
+        return true;
+
+    return false;
+
 }
 
