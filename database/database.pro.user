@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.5.1, 2021-06-12T23:10:26. -->
+<!-- Written by QtCreator 3.5.1, 2021-06-15T23:31:34. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -58,7 +58,7 @@
  <data>
   <variable>ProjectExplorer.Project.Target.0</variable>
   <valuemap type="QVariantMap">
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">桌面</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">qt5</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">qt5</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{311818f2-c141-4bb7-b401-7707d7d0fa93}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
@@ -259,7 +259,7 @@
  <data>
   <variable>ProjectExplorer.Project.Target.1</variable>
   <valuemap type="QVariantMap">
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">未命名</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">qt4</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">qt4</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{c41e5c9d-de11-4fbe-a186-580765d950d3}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>

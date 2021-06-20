@@ -16,13 +16,21 @@ SOURCES += main.cpp\
         database/testsqlite3.cpp \
     qt_ui/listdatabaseview.cpp \
     database/systeminfo.cpp \
-    database/lineitem.cpp
+    database/lineitem.cpp \
+    qt_ui/testscreenpush.cpp \
+    qt_ui/uicontroler.cpp \
+    qt_ui/login.cpp
 
 HEADERS  += \
     qt_ui/listdatabaseview.h \
+    qt_ui/testscreenpush.h \
+    qt_ui/uicontroler.h \
+    qt_ui/login.h
 
 INCLUDEPATH += database/include \
     qt_ui \
 
 FORMS    += \
-    qt_ui/listdatabaseview.ui
+    qt_ui/listdatabaseview.ui \
+    qt_ui/testscreenpush.ui \
+    qt_ui/login.ui
