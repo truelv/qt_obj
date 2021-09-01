@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>167</width>
-    <height>233</height>
+    <width>720</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,66 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
+      <widget class="QPushButton" name="panelButton_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
+         <unicode>49</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>50</UInt>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="panelButton_backspace">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>&lt;</string>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
+         <unicode>0</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>16777219</UInt>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="panelButton_1">
        <property name="sizePolicy">
@@ -27,7 +87,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -41,32 +101,8 @@
          <unicode>49</unicode>
         </char>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="panelButton_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>45</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>2</string>
-       </property>
-       <property name="buttonValue" stdset="0">
-        <char>
-         <unicode>50</unicode>
-        </char>
+       <property name="keyCode" stdset="0">
+        <UInt>49</UInt>
        </property>
       </widget>
      </item>
@@ -81,7 +117,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -92,12 +128,42 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
+         <unicode>49</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>51</UInt>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="panelButton_3333">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
          <unicode>51</unicode>
         </char>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QPushButton" name="panelButton_4">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -108,7 +174,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -119,12 +185,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>52</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>52</UInt>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QPushButton" name="panelButton_5">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -135,7 +204,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -146,12 +215,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>53</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>53</UInt>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="2">
       <widget class="QPushButton" name="panelButton_6">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -162,7 +234,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -173,12 +245,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>54</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>54</UInt>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QPushButton" name="panelButton_7">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -189,7 +264,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -200,12 +275,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>55</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>55</UInt>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QPushButton" name="panelButton_8">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -216,7 +294,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -227,12 +305,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>56</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>56</UInt>
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
+     <item row="3" column="2">
       <widget class="QPushButton" name="panelButton_9">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -243,7 +324,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -254,39 +335,15 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>57</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>57</UInt>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="panelButton_star">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>45</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>*</string>
-       </property>
-       <property name="buttonValue" stdset="0">
-        <char>
-         <unicode>42</unicode>
-        </char>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QPushButton" name="panelButton_0">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -297,7 +354,7 @@
        <property name="minimumSize">
         <size>
          <width>45</width>
-         <height>40</height>
+         <height>100</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -308,13 +365,76 @@
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>48</unicode>
+         <unicode>49</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>48</UInt>
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="4" column="0">
+      <widget class="QPushButton" name="panelButton_star">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>*</string>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
+         <unicode>49</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>42</UInt>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
       <widget class="QPushButton" name="panelButton_hash">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>#</string>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
+         <unicode>49</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>35</UInt>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="QPushButton" name="panelButton_backspace_2">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -331,12 +451,45 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>#</string>
+        <string>abc</string>
        </property>
        <property name="buttonValue" stdset="0">
         <char>
-         <unicode>35</unicode>
+         <unicode>0</unicode>
         </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>16777219</UInt>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QPushButton" name="panelButton_hash_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>空格</string>
+       </property>
+       <property name="buttonValue" stdset="0">
+        <char>
+         <unicode>49</unicode>
+        </char>
+       </property>
+       <property name="keyCode" stdset="0">
+        <UInt>32</UInt>
        </property>
       </widget>
      </item>
@@ -359,6 +512,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="closeButton">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>100</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>

@@ -43,6 +43,7 @@
 
 #include <QtGui>
 #include <QtCore>
+#include <QKeyEvent>
 
 #include "ui_myinputpanelform.h"
 
@@ -56,7 +57,7 @@ public:
     MyInputPanel();
 
 signals:
-    void characterGenerated(QChar character);
+    void characterGenerated(int codec);
 
 protected:
     bool event(QEvent *e);

@@ -47,7 +47,7 @@
 MyInputPanelContext::MyInputPanelContext()
 {
     inputPanel = new MyInputPanel;
-    connect(inputPanel, SIGNAL(characterGenerated(QChar)), SLOT(sendCharacter(QChar)));
+    connect(inputPanel, SIGNAL(characterGenerated(int)), SLOT(sendCharacter(int)));
 }
 
 //! [0]
@@ -95,21 +95,23 @@ QString MyInputPanelContext::language()
 
 //! [2]
 
-void MyInputPanelContext::sendCharacter(QChar character)
+void MyInputPanelContext::sendCharacter(int codec)
 {
     QPointer<QWidget> w = focusWidget();
 
     if (!w)
         return;
 
-    QKeyEvent keyPress(QEvent::KeyPress, character.unicode(), Qt::NoModifier, QString(character));
+    QKeyEvent keyPress(QEvent::KeyPress, codec, Qt::NoModifier, QString(codec));
     QApplication::sendEvent(w, &keyPress);
 
+#if 0
     if (!w)
         return;
 
-    QKeyEvent keyRelease(QEvent::KeyPress, character.unicode(), Qt::NoModifier, QString());
+    QKeyEvent keyRelease(QEvent::KeyPress, codec, Qt::NoModifier, QString());
     QApplication::sendEvent(w, &keyRelease);
+#endif
 }
 
 //! [2]

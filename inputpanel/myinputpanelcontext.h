@@ -42,6 +42,7 @@
 #define MYINPUTPANELCONTEXT_H
 
 #include <QtGui/QInputContext>
+#include <qnamespace.h>
 
 #include "myinputpanel.h"
 
@@ -67,7 +68,7 @@ public:
     void reset();
 
 private slots:
-    void sendCharacter(QChar character);
+    void sendCharacter(int codec);
 
 private:
     void updatePosition();

@@ -40,10 +40,12 @@
 
 #include "myinputpanel.h"
 
+#include <QDebug>
+
 //! [0]
 
 MyInputPanel::MyInputPanel()
-    : QWidget(0, Qt::Tool | Qt::WindowStaysOnTopHint),
+    : QWidget(0, Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint),
       lastFocusedWidget(0)
 {
     form.setupUi(this);
@@ -63,6 +65,8 @@ MyInputPanel::MyInputPanel()
     signalMapper.setMapping(form.panelButton_star, form.panelButton_star);
     signalMapper.setMapping(form.panelButton_0, form.panelButton_0);
     signalMapper.setMapping(form.panelButton_hash, form.panelButton_hash);
+
+    signalMapper.setMapping(form.panelButton_backspace, form.panelButton_backspace);
 
     connect(form.panelButton_1, SIGNAL(clicked()),
             &signalMapper, SLOT(map()));
@@ -87,6 +91,9 @@ MyInputPanel::MyInputPanel()
     connect(form.panelButton_0, SIGNAL(clicked()),
             &signalMapper, SLOT(map()));
     connect(form.panelButton_hash, SIGNAL(clicked()),
+            &signalMapper, SLOT(map()));
+
+    connect(form.panelButton_backspace, SIGNAL(clicked()),
             &signalMapper, SLOT(map()));
 
     connect(&signalMapper, SIGNAL(mapped(QWidget*)),
@@ -126,8 +133,9 @@ void MyInputPanel::saveFocusWidget(QWidget * /*oldFocus*/, QWidget *newFocus)
 
 void MyInputPanel::buttonClicked(QWidget *w)
 {
-    QChar chr = qvariant_cast<QChar>(w->property("buttonValue"));
-    emit characterGenerated(chr);
+    int code = qvariant_cast<int>(w->property("keyCode"));
+    qDebug() << "按键字符" << code;
+    emit characterGenerated(code);
 }
 
 //! [3]
