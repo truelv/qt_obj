@@ -8,7 +8,7 @@ class InterUi
 public:
     InterUi();
     virtual ~InterUi();
-    virtual void setLineTextStyle(const QString& style);
+    virtual void returnInput();
     virtual void bindUi(QWidget* w) = 0;
 };
 

@@ -1,13 +1,16 @@
 #ifndef SPRINGFRAME_H
 #define SPRINGFRAME_H
-#include "interui.h"
+#include "interUi/interui.h"
+#include "interUi/sfinputline.h"
+#include "interUi/sflinetext.h"
+#include "interUi/sf485error.h"
 #include <QDialog>
 
 // 子控件类型
 typedef enum {
-    LINE_TEXT = 0,  // 显示一行文字
-    INPUT_LINE,     // 显示一个输入框
-    // 显示底部2行文字显示，顶部一个图片显示
+    SF_LINETEXT = 0,     // 显示一行文字
+    SF_INPUTLINE,       // 显示一个输入框
+    SF_485ERR           // 显示底部2行文字显示，顶部一个图片显示
 } SF_TYPE;
 
 // 超时显示超时处理类型
@@ -28,7 +31,7 @@ class SpringFrame : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpringFrame(QWidget *parent = 0, SF_TYPE type=LINE_TEXT, int x=0, int y=0, int w=100, int h=100);
+    explicit SpringFrame(QWidget *parent = 0, SF_TYPE type=SF_LINETEXT, int x=0, int y=0, int w=100, int h=100);
     ~SpringFrame();
     // 设置frame的样式
     void setFrameStyle(const QString& style);
@@ -54,27 +57,6 @@ private:
     // 超时显示
     int _count;
     TIMEOUT_EV _event;
-
-public:
-    class LineText : public InterUi{
-    public:
-        LineText();
-        ~LineText();
-        void setLineTextStyle(const QString& style);
-        void bindUi(QWidget* w);
-
-        Ui::MessageLineText* ui;
-    };
-
-    class InputLine : public InterUi {
-    public:
-        InputLine();
-        ~InputLine();
-        void bindUi(QWidget* w);
-
-        Ui::InputLine* ui;
-    };
-
 };
 
 #endif // SPRINGFRAME_H

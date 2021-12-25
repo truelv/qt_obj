@@ -11,7 +11,7 @@ InterUi::~InterUi()
 
 }
 
-void InterUi::setLineTextStyle(const QString &style)
+void InterUi::returnInput()
 {
 
 }

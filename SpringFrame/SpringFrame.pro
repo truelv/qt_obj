@@ -15,16 +15,23 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     springframe.cpp \
-    interui.cpp
+    interUi/interui.cpp \
+    interUi/sflinetext.cpp \
+    interUi/sfinputline.cpp \
+    interUi/sf485error.cpp
 
 HEADERS  += mainwindow.h \
     springframe.h \
-    interui.h
+    interUi/interui.h \
+    interUi/sflinetext.h \
+    interUi/sfinputline.h \
+    interUi/sf485error.h
 
 FORMS    += mainwindow.ui \
     springframe.ui \
-    messagelinetext.ui \
-    inputline.ui
+    interUi/messagelinetext.ui \
+    interUi/inputline.ui \
+    interUi/sf485error.ui
 
 
 LIBS += -L/home/zhh/work/052_YT328智通终端/01.开发库/050.软件开发/020.源代码/ZYTK_Reader_YT328/sdk/lib \

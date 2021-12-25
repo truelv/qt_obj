@@ -1,13 +1,9 @@
 #include "springframe.h"
 #include "ui_springframe.h"
-#include "ui_messagelinetext.h"
-#include "ui_inputline.h"
 #include <QWSServer>
 #include <QColor>
 #include <QDebug>
 #include <QTimer>
-
-#define EDIT_DEFAUT_HIGHT 70
 
 SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, int x, int y, int w, int h) :
     QDialog(parent),
@@ -21,19 +17,19 @@ SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, int x, int y, int w, int
 
     // 子窗口
     switch (type) {
-    case INPUT_LINE:
-    {
-        _uiOpt = new InputLine;
-        _uiOpt->bindUi(ui->widget);
+    case SF_485ERR:
+        _uiOpt = new SF485Error;
         break;
-    }
-    case LINE_TEXT:
+    case SF_INPUTLINE:
+        _uiOpt = new SFInputLine;
+        break;
+    case SF_LINETEXT:
     default:
-        _uiOpt = new LineText;
-        _uiOpt->bindUi(ui->widget);
+        _uiOpt = new SFLineText;
         break;
     }
 
+    _uiOpt->bindUi(ui->widget);
     _type = type;
     ui->frame->setGeometry(x,y,w,h);
     showMaximized();
@@ -87,12 +83,15 @@ void SpringFrame::showTimeOut(TIMEOUT_EV e, int sec)
 
 void SpringFrame::on_sure_clicked()
 {
-
+    // 控件销毁，执行子控件的获取数据函数
+    _uiOpt->returnInput();
+    deleteLater();
 }
 
 void SpringFrame::on_cancel_clicked()
 {
     // 控件销毁/隐藏，根据继承类重写决定
+    deleteLater();
 }
 
 void SpringFrame::countTimeOut()
@@ -132,39 +131,8 @@ void SpringFrame::countTimeOut()
     }
 }
 
-SpringFrame::LineText::LineText() :
-    ui(new Ui::MessageLineText)
-{
 
-}
 
-SpringFrame::LineText::~LineText()
-{
-    delete ui;
-}
 
-void SpringFrame::LineText::setLineTextStyle(const QString &style)
-{
-    ui->label->setStyleSheet(style);
-}
 
-void SpringFrame::LineText::bindUi(QWidget *w)
-{
-    ui->setupUi(w);
-}
 
-SpringFrame::InputLine::InputLine() :
-    ui(new Ui::InputLine)
-{
-
-}
-
-SpringFrame::InputLine::~InputLine()
-{
-    delete ui;
-}
-
-void SpringFrame::InputLine::bindUi(QWidget *w)
-{
-    ui->setupUi(w);
-}
