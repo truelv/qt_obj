@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QTimer>
 
-SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, int x, int y, int w, int h) :
+SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, const QRect &rect, bool btshow) :
     QDialog(parent),
     ui(new Ui::SpringFrame)
 {
@@ -14,6 +14,8 @@ SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, int x, int y, int w, int
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
     QWSServer::setBackground(QColor(0,0,0,0));
+    ui->cancel->setVisible(btshow);
+    ui->sure->setVisible(btshow);
 
     // 子窗口
     switch (type) {
@@ -31,7 +33,7 @@ SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, int x, int y, int w, int
 
     _uiOpt->bindUi(ui->widget);
     _type = type;
-    ui->frame->setGeometry(x,y,w,h);
+    ui->frame->setGeometry(rect);
     showMaximized();
 }
 
@@ -98,10 +100,10 @@ void SpringFrame::countTimeOut()
 {
     switch (_event)
     {
-    case EV_REBOOT:
+    case SFEV_REBOOT:
         break;
-    case EV_DIALOG_EXIT:
-    case EV_DIALOG_HIDE:
+    case SFEV_DIALOG_EXIT:
+    case SFEV_DIALOG_HIDE:
     default:
         break;
     }
@@ -110,13 +112,13 @@ void SpringFrame::countTimeOut()
     {
         // 时间到
         switch (_event) {
-        case EV_REBOOT:
+        case SFEV_REBOOT:
 
             break;
-        case EV_DIALOG_EXIT:
+        case SFEV_DIALOG_EXIT:
             this->deleteLater();
             break;
-        case EV_DIALOG_HIDE:
+        case SFEV_DIALOG_HIDE:
             // 隐藏
             this->hide();
             break;
