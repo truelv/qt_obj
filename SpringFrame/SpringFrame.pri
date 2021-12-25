@@ -4,21 +4,21 @@
 #
 #-------------------------------------------------
 
-SOURCES += springframe.cpp \
-    interUi/interui.cpp \
-    interUi/sflinetext.cpp \
-    interUi/sfinputline.cpp \
-    interUi/sf485error.cpp
+SOURCES += $$PWD/springframe.cpp \
+    $$PWD/interUi/interui.cpp \
+    $$PWD/interUi/sflinetext.cpp \
+    $$PWD/interUi/sfinputline.cpp \
+    $$PWD/interUi/sf485error.cpp
 
-HEADERS  += springframe.h \
-    interUi/interui.h \
-    interUi/sflinetext.h \
-    interUi/sfinputline.h \
-    interUi/sf485error.h
+HEADERS  += $$PWD/springframe.h \
+    $$PWD/interUi/interui.h \
+    $$PWD/interUi/sflinetext.h \
+    $$PWD/interUi/sfinputline.h \
+    $$PWD/interUi/sf485error.h
 
-FORMS    += springframe.ui \
-    interUi/messagelinetext.ui \
-    interUi/inputline.ui \
-    interUi/sf485error.ui
+FORMS    += $$PWD/springframe.ui \
+    $$PWD/interUi/messagelinetext.ui \
+    $$PWD/interUi/inputline.ui \
+    $$PWD/interUi/sf485error.ui
 
 

@@ -5,6 +5,7 @@
 #include "interUi/sflinetext.h"
 #include "interUi/sf485error.h"
 #include <QDialog>
+#include <QSize>
 
 // 子控件类型
 typedef enum {
@@ -15,9 +16,9 @@ typedef enum {
 
 // 超时显示超时处理类型
 typedef enum {
-    EV_REBOOT,
-    EV_DIALOG_EXIT,
-    EV_DIALOG_HIDE,
+    SFEV_REBOOT,
+    SFEV_DIALOG_EXIT,
+    SFEV_DIALOG_HIDE,
 } TIMEOUT_EV;
 
 namespace Ui {
@@ -31,7 +32,7 @@ class SpringFrame : public QDialog
     Q_OBJECT
 
 public:
-    explicit SpringFrame(QWidget *parent = 0, SF_TYPE type=SF_LINETEXT, int x=0, int y=0, int w=100, int h=100);
+    explicit SpringFrame(QWidget *parent = 0, SF_TYPE type=SF_LINETEXT, const QRect& rect=QRect(0,0,100,100), bool btshow=false);
     ~SpringFrame();
     // 设置frame的样式
     void setFrameStyle(const QString& style);
@@ -42,7 +43,7 @@ public:
     // 获取子控件
     InterUi* getUiOpt();
     // 计时显示
-    void showTimeOut(TIMEOUT_EV e=EV_DIALOG_HIDE, int sec=3);
+    void showTimeOut(TIMEOUT_EV e=SFEV_DIALOG_HIDE, int sec=3);
     // 切换类型
 
 private slots:
