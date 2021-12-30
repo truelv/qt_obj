@@ -10,6 +10,6 @@ git config core.sparsecheckout true
 ### 2、设置需要克隆的子目录，childfile是要克隆的目录
 echo 'childfile*' >> .git/info/sparse-checkout
 ### 3、配置远程仓库
-git remote add origin <giturl>
+git remote add origin < giturl>
 ### 4、同步
 git pull origin master
