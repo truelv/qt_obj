@@ -7,6 +7,7 @@ class ServerIP : public InputKVs
 public:
     ServerIP();
     int GetInput(QVariantList& retval);
+    int SetInput(QVariantList& retval);
 
 private:
 

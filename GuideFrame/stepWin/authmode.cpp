@@ -9,7 +9,7 @@ static SELECT_ITEM authSl[] = {
 
 AuthMode::AuthMode()
 {
-    qDebug() << "子控件";
+    printf("子控件\n");
     int len = sizeof(authSl)/sizeof(SELECT_ITEM);
     for (int i=0;i<len;i++)
     {

@@ -25,6 +25,7 @@ public:
     void AddSelectItem(SELECT_ITEM* item);
     void AppendVSpacer();
     int GetInput(QVariantList& retval);
+    int SetInput(QVariantList& retval);
 
 protected slots:
     virtual void SlotRbtClick(bool click);

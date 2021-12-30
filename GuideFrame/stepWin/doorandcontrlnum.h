@@ -7,6 +7,7 @@ class DoorAndContrlNum : public InputKVs
 public:
     DoorAndContrlNum();
     int GetInput(QVariantList& retval);
+    int SetInput(QVariantList& retval);
 };
 
 #endif // DOORANDCONTRLNUM_H

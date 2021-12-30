@@ -2,6 +2,7 @@
 #define GUIDEFRAME_H
 
 #include <QWidget>
+#include <QDialog>
 #include "stepWin/base/ifacechildopt.h"
 
 typedef enum {
@@ -29,12 +30,12 @@ namespace Ui {
 class GuideFrame;
 }
 
-class GuideFrame : public QWidget
+class GuideFrame : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit GuideFrame(QWidget *parent = 0);
+    explicit GuideFrame(QDialog *parent = 0);
     virtual ~GuideFrame();
     void AddWidget(ONE_FRAME* frame);
     void RemoveWidget(int index);
@@ -46,8 +47,11 @@ public:
 protected slots:
     void on_btnext_clicked();
     void on_btpre_clicked();
-    // 实现这个方法，获取输入参数，处理参数
-    virtual void ReturnPageInput(int index) = 0;
+    // 实现这个方法，获取输入参数，处理参数，
+    // 并返回下一个子窗口序号为下一个显示窗口，返回-1结束引导
+    virtual int ReturnPageInput(int index) = 0;
+    // 实现这个方法，给控件设置初始参数
+    virtual void InitUIData(int index) = 0;
 
 private:
     Ui::GuideFrame *ui;

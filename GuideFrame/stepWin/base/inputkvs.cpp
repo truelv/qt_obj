@@ -18,25 +18,26 @@ InputKVs::~InputKVs()
     foreach (INPUT_ITEM* item, _iList) {
         if (NULL!=item->inWid)
         {
-            qDebug() << "清除输入控件";
+            printf("清除输入控件\n");
             delete item->inWid;
             item->inWid = NULL;
         }
 
         if (NULL!=item->lable)
         {
-            qDebug() << "清除标题控件";
+            printf("清除标题控件\n");
             delete item->lable;
             item->lable = NULL;
         }
 
         if (NULL!=item->hLayout)
         {
-            qDebug() << "清除布局控件";
+            printf("清除布局控件\n");
             delete item->hLayout;
             item->hLayout = NULL;
         }
     }
+    _iList.clear();
     delete _vLayout;
 }
 
@@ -52,7 +53,7 @@ void InputKVs::AddWidget(INPUT_ITEM *item)
 
     if (NULL!=item->lableName)
     {
-        QLabel* label = new QLabel(item->lableName);
+        QLabel* label = new QLabel(tr(item->lableName));
         // 添加默认样式
         label->setMinimumWidth(200);
         label->setStyleSheet("font-size:50px;color:white");
@@ -64,7 +65,7 @@ void InputKVs::AddWidget(INPUT_ITEM *item)
     switch (item->type) {
     case INPUT_LINEEDIT:
         if(NULL!=item->inTmpstr)
-            input = new QLineEdit(item->inTmpstr);
+            input = new QLineEdit(tr(item->inTmpstr));
         else
             input = new QLineEdit;
         input->setStyleSheet("font-size:50px;");

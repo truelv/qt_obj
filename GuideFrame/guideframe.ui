@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>GuideFrame</class>
- <widget class="QWidget" name="GuideFrame">
+ <widget class="QDialog" name="GuideFrame">
   <property name="geometry">
    <rect>
     <x>0</x>

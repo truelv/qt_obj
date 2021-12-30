@@ -27,3 +27,13 @@ int ServerIP::GetInput(QVariantList &retval)
     return 0;
 }
 
+int ServerIP::SetInput(QVariantList &retval)
+{
+    QLineEdit* ed = NULL;
+    for (int i=0;i<len;i++)
+    {
+        ed = (QLineEdit*)inWids[i].inWid;
+        ed->setText(retval[i].toString());
+    }
+}
+

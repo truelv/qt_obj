@@ -15,6 +15,7 @@ public:
     explicit EthSetting(QWidget *parent = 0);
     ~EthSetting();
     int GetInput(QVariantList& retval);
+    int SetInput(QVariantList& retval);
 
 private:
     Ui::EthSetting *ui;

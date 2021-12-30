@@ -8,6 +8,7 @@ public:
     virtual ~IfaceChildOpt() {}
     // 控件实现GetInput方法带回输入的内容
     virtual int GetInput(QVariantList& retval) = 0;
+    virtual int SetInput(QVariantList& retval) = 0;
 };
 
 #endif // IFACECHILDOPT

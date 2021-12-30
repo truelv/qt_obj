@@ -1,5 +1,5 @@
 #include "serverurl.h"
-#include "ui_serverurl.h"
+#include <QLineEdit>
 
 static INPUT_ITEM inWids[] = {
     {INPUT_LABEL, 0, "输入人脸url全地址", "0", NULL, NULL, NULL},
@@ -23,5 +23,12 @@ int ServerUrl::GetInput(QVariantList &retval)
     {
         AppendInputValue(&inWids[i], retval);
     }
+    return 0;
+}
+
+int ServerUrl::SetInput(QVariantList &retval)
+{
+    QLineEdit* ed = (QLineEdit*)inWids[1].inWid;
+    ed->setText(retval[0].toString());
     return 0;
 }
