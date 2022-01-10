@@ -56,7 +56,7 @@ void InputKVs::AddWidget(INPUT_ITEM *item)
         QLabel* label = new QLabel(tr(item->lableName));
         // 添加默认样式
         label->setMinimumWidth(200);
-        label->setStyleSheet("font-size:50px;color:white");
+        label->setStyleSheet("font-size:48px;color:white");
         hLayout->addWidget(label);
         item->lable = label;
     }

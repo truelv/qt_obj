@@ -6,7 +6,7 @@ EthSetting::EthSetting(QWidget *parent) :
     ui(new Ui::EthSetting)
 {
     ui->setupUi(this);
-    setStyleSheet("QLabel{color:white;font-size:50px}QLineEdit{font-size:60px}"
+    setStyleSheet("QLabel{color:white;font-size:50px}QLineEdit{font-size:48px}"
                   "QCheckBox::indicator{height:50px;width:50px}"
                   "QCheckBox::indicator:checked{border-image:url(/data/zytk_reader/img/check_press.png);}");
 }
@@ -35,6 +35,4 @@ int EthSetting::SetInput(QVariantList &retval)
     retval[4].toInt()?ui->dhcp->setChecked(true):ui->dhcp->setChecked(false);
     return 0;
 }
-
-
 

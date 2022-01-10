@@ -2,8 +2,8 @@
 #include <QDebug>
 
 static SELECT_ITEM contrlSl[] = {
-    {0, "485模式", 0},
-    {1, "韦根模式", 0},
+    {0, "韦根模式", 0},
+    {1, "485模式", 0},
 };
 
 ContrlMode::ContrlMode()

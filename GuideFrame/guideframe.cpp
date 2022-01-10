@@ -91,7 +91,8 @@ void GuideFrame::ShowIndex(int index)
         return;
 
     ui->stackedWidget->setCurrentIndex(index);
-    ONE_FRAME* frame = wList[0];
+    ONE_FRAME* frame = wList[index];
+    frame->pre = index;
     ui->title->setText(tr(frame->title));
 }
 
@@ -117,6 +118,8 @@ void GuideFrame::on_btnext_clicked()
     printf("切换下一个窗口，当前 %d\n", index);
     int next  = ReturnPageInput(index);
     printf("切换下一个窗口，下一个 %d\n", next);
+    if (index==next)
+        return;
     //index = index<_stackeCount?index:(_stackeCount-1);
     if (-1==next)
     {
