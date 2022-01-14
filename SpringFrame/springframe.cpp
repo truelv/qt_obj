@@ -87,12 +87,14 @@ void SpringFrame::on_sure_clicked()
 {
     // 控件销毁，执行子控件的获取数据函数
     _uiOpt->returnInput();
+    accept();
     deleteLater();
 }
 
 void SpringFrame::on_cancel_clicked()
 {
     // 控件销毁/隐藏，根据继承类重写决定
+    reject();
     deleteLater();
 }
 

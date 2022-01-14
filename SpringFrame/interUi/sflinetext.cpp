@@ -17,6 +17,11 @@ void SFLineText::setLineTextStyle(const QString &style)
     ui->label->setStyleSheet(style);
 }
 
+void SFLineText::setLineTextAlignment(Qt::Alignment a)
+{
+    ui->label->setAlignment(a);
+}
+
 void SFLineText::bindUi(QWidget *w)
 {
     ui->setupUi(w);
