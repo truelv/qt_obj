@@ -15,11 +15,13 @@ int main(int argc, char *argv[])
 
     SpringFrame* v = new SpringFrame(0,SF_LINETEXT, 10,100,500,300);
     v->setFrameStyle("border-image:url(/data/zytk_reader/img/title_dialog_background.png);");
-    v->setButtonStyle("background-color:rgb(29,50,163,254);font-size:45px;color:white");
+    //v->setButtonStyle("background-color:rgb(29,50,163,254);font-size:45px;color:white");
+    v->hideButton(false);
     SFLineText* iLine = (SFLineText*)v->getUiOpt();
-    iLine->setLineTextStyle("font-size:45px;");
+    iLine->setLineTextStyle("font-size:30px;");
+    iLine->setShowText(QObject::tr("• 485连线是否正确\n• 模式配置及ID配置是否正确\n• 查看控制器版本是否高于21.1030"));
     v->show();
-#if 0
+#if 1
     SpringFrame* v2 = new SpringFrame(0,SF_INPUTLINE, 10,900,500,300);
     v2->setFrameStyle("border-radius:20px;background-color:rgb(29,50,163,254);");
     v2->setButtonStyle("background-color:rgb(0,0,255);font-size:45px;color:white");
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
     qDebug() << "xxxxxxxx" << pass;
 #endif
 
-#if 1
+#if 0
     SpringFrame* v1 = new SpringFrame(0,SF_485ERR, 0,0,720,1280);
     v1->hideButton(false);
     v1->setFrameStyle("background-color:rgb(255,255,255);");
@@ -44,7 +46,6 @@ int main(int argc, char *argv[])
     err485->setContentStyle("font-size:35px;color:rgb(92,94,134,254)");
     err485->setContentText(QObject::tr("• 485连线是否正确\n• 模式配置及ID配置是否正确\n• 查看控制器版本是否高于21.1030"));
     v1->show();
-
 #endif
     return a.exec();
 }
