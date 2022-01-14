@@ -34,6 +34,8 @@ int DoorAndContrlNum::SetInput(QVariantList &retval)
     {
         ed = (QLineEdit*)inWids[i].inWid;
         ed->setText(retval[i].toString());
+        ed->setMaxLength(12);
     }
+    return 0;
 }
 

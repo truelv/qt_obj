@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QDialog>
 #include "stepWin/base/ifacechildopt.h"
+#include "stepWin/base/inputkvs.h"
+#include "stepWin/lineinputlists.h"
 
 typedef enum {
     GUIDE_ETH = 0,
@@ -13,6 +15,8 @@ typedef enum {
     GUIDE_SERVERIP,
     GUIDE_SERVERURL,
     GUIDE_DOORNUM,
+    GUIDE_MACHNUM,
+    GUIDE_LINEINPUT_LISTS,
 } GUIDEFRAME_TYPE;
 // 描述一个窗口，
 typedef struct {
@@ -22,7 +26,8 @@ typedef struct {
     int pre;                // 上一个编号
     bool ignore;            // 是否可以跳过
     const char* title;
-    QWidget* w;             // 窗口指针，
+    QWidget* w;             // 窗口指针
+    void* pri;               // 私有参数
     //
 } ONE_FRAME;
 
@@ -43,6 +48,7 @@ public:
     void SetButtonStyle(const QString& style);
     void SetTileStyle(const QString& style);
     void SetFrameStyle(const QString& style);
+    void HideKeyBoard();
 
 protected slots:
     void on_btnext_clicked();
@@ -53,7 +59,7 @@ protected slots:
     // 实现这个方法，给控件设置初始参数
     virtual void InitUIData(int index) = 0;
 
-private:
+protected:
     Ui::GuideFrame *ui;
     int _stackeCount;
     QVector<ONE_FRAME*> wList;

@@ -18,4 +18,5 @@ AuthMode::AuthMode()
     AppendVSpacer();
     _index = 0;
     ((QRadioButton*)(authSl[0].w))->setChecked(true);
+
 }

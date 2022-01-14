@@ -30,7 +30,7 @@ public:
     void AppendVSpacer();
     void AppendInputValue(INPUT_ITEM* item, QVariantList& list);
 
-private:
+protected:
     QVBoxLayout* _vLayout;
     QVector<INPUT_ITEM*> _iList;
 };
