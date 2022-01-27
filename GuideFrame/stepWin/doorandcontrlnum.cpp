@@ -2,7 +2,7 @@
 #include <QLineEdit>
 
 static INPUT_ITEM inWids[] = {
-    {INPUT_LINEEDIT, 0, "控制器号", "0", NULL, NULL, NULL},
+    {INPUT_LINEEDIT, 0, "控制器号\n或序列号", "0", NULL, NULL, NULL},
 };
 // 计算控件数量
 static const int len = sizeof(inWids)/sizeof(INPUT_ITEM);

@@ -53,7 +53,7 @@ void SelectWin::AppendVSpacer()
     _vLayout->addStretch();
     //QRadioButton::indicator:checked{image:url(./image4.png);QRadioButton::indicator:unchecked{image:url(./image1.png);}
     setStyleSheet("QRadioButton::indicator{width:50px;height:50px}"
-                  "QRadioButton::indicator:checked{border-image:url(/data/zytk_reader/img/check_press.png);}");
+                  "QRadioButton::indicator:checked{border-image:url(/data/zytk_reader/img/radio_button.png);}");
 
 }
 

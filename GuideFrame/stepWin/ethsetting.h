@@ -18,6 +18,12 @@ public:
     int SetInput(QVariantList& retval);
 
 private:
+    void EditEnable(bool on);
+
+private slots:
+    void on_dhcp_stateChanged(int state);
+
+private:
     Ui::EthSetting *ui;
 };
 

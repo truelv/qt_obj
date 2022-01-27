@@ -68,7 +68,7 @@ void InputKVs::AddWidget(INPUT_ITEM *item)
             input = new QLineEdit(tr(item->inTmpstr));
         else
             input = new QLineEdit;
-        input->setStyleSheet("font-size:50px;");
+        input->setStyleSheet("font-size:50px;color:black");
         break;
     case INPUT_CHECKBOX:
         input = new QCheckBox;
