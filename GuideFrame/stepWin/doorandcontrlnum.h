@@ -4,10 +4,14 @@
 
 class DoorAndContrlNum : public InputKVs
 {
+    Q_OBJECT
 public:
     DoorAndContrlNum();
     int GetInput(QVariantList& retval);
     int SetInput(QVariantList& retval);
+
+protected slots:
+    void  UpperText(QString text);
 };
 
 #endif // DOORANDCONTRLNUM_H
