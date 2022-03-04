@@ -65,6 +65,15 @@ protected:
 private slots:
     void saveFocusWidget(QWidget *oldFocus, QWidget *newFocus);
     void buttonClicked(QWidget *w);
+    void on_panelButton_switchbox_clicked();
+    void on_panelButton_xyztomark_clicked();
+    void on_panelButton_abctomark_clicked();
+    void on_panelButton_numtomark_clicked();
+    void slotPanelPageDown();
+    void slotPanelPageUp();
+    void on_panelButton_Caps2_clicked();
+    void on_panelButton_Caps1_clicked();
+    void on_stackedWidget_currentChanged(int num);
 
 private:
     Ui::MyInputPanelForm form;
