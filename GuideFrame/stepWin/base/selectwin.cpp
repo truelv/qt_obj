@@ -4,7 +4,7 @@
 SelectWin::SelectWin(QWidget *parent) :
     QWidget(parent)
 {
-    printf("父控件\n");
+    //printf("父控件\n");
     //ui->setupUi(this);
     _vLayout = new QVBoxLayout(this);
     _vLayout->setContentsMargins(260, 160, 100, 100);
@@ -60,7 +60,7 @@ void SelectWin::AppendVSpacer()
 int SelectWin::GetInput(QVariantList &retval)
 {
     retval.append(_index);
-    printf("带回数据 %d\n", retval.length());
+    //printf("带回数据 %d\n", retval.length());
     return 0;
 }
 
@@ -83,7 +83,7 @@ void SelectWin::SlotRbtClick(bool click)
 {
     Q_UNUSED(click)
     _index = sender()->property("id").toInt();
-    printf("选择了权限模式 %d\n", _index);
+    //printf("选择了权限模式 %d\n", _index);
 }
 
 

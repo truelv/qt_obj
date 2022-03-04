@@ -38,7 +38,7 @@ void GuideFrame::AddWidget(ONE_FRAME *frame)
     if (NULL==frame)
         return;
 
-    printf("窗口序号 %d\n", frame->index);
+    //printf("窗口序号 %d\n", frame->index);
     switch (frame->type) {
     case GUIDE_ETH:
         frame->w = new EthSetting;

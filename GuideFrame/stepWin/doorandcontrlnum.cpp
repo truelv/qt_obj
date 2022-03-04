@@ -12,6 +12,8 @@ DoorAndContrlNum::DoorAndContrlNum()
     for (int i=0;i<len;i++)
     {
         AddWidget(&inWids[i]);
+        QLineEdit* ed = dynamic_cast<QLineEdit*>(inWids[i].inWid);
+        connect(ed, SIGNAL(textEdited(QString)), this, SLOT(UpperText(QString)));
     }
     AppendVSpacer();
 }
@@ -37,5 +39,11 @@ int DoorAndContrlNum::SetInput(QVariantList &retval)
         ed->setMaxLength(12);
     }
     return 0;
+}
+
+void DoorAndContrlNum::UpperText(QString text)
+{
+    QLineEdit* ed = dynamic_cast<QLineEdit*>(sender());
+    ed->setText(text.toUpper());
 }
 

@@ -51,7 +51,7 @@ QWidget *LineInputLists::GetWidget(int index)
     if (itemIndex>=_lineCount)
         return NULL;
 
-    printf("获取窗口内部控件 %d \n", itemIndex);
+    //printf("获取窗口内部控件 %d \n", itemIndex);
     INPUT_ITEM* item = &_items[itemIndex];
     if (index%2)
         return (item->inWid);
