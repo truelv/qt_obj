@@ -61,11 +61,14 @@ MyInputPanelContext::~MyInputPanelContext()
 
 bool MyInputPanelContext::filterEvent(const QEvent* event)
 {
-    if (event->type() == QEvent::RequestSoftwareInputPanel) {
+    if (event->type() == QEvent::RequestSoftwareInputPanel)
+    {
         updatePosition();
         inputPanel->show();
         return true;
-    } else if (event->type() == QEvent::CloseSoftwareInputPanel) {
+    }
+    else if (event->type() == QEvent::CloseSoftwareInputPanel)
+    {
         inputPanel->hide();
         return true;
     }
@@ -124,10 +127,10 @@ void MyInputPanelContext::updatePosition()
     if (!widget)
         return;
 
-    QRect widgetRect = widget->rect();
-    QPoint panelPos = QPoint(widgetRect.left(), widgetRect.bottom() + 2);
-    panelPos = widget->mapToGlobal(panelPos);
-    inputPanel->move(panelPos);
+    //QRect widgetRect = widget->rect();
+    //QPoint panelPos = QPoint(widgetRect.left(), widgetRect.bottom() + 2);
+    //panelPos = widget->mapToGlobal(panelPos);
+    inputPanel->move(0, 1280-448);
 }
 
 //! [3]
