@@ -80,8 +80,10 @@ private slots:
     virtual void on_cancel_clicked();
     void countTimeOut();
 
-protected:
+public:
     Ui::SpringFrame *ui;
+
+protected:   
     SF_TYPE _type;
     InterUi* _uiOpt;
     // 超时显示
