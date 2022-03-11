@@ -15,12 +15,12 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">
-    <spacer name="verticalSpacer">
+    <spacer name="topspacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeType">
-      <enum>QSizePolicy::Minimum</enum>
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -46,7 +46,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>单行显示消息框</string>
+      <string/>
      </property>
     </widget>
    </item>

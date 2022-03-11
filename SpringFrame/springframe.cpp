@@ -19,7 +19,6 @@ SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, const QRect &rect, bool 
 
     // 子窗口
     _uiOpt = NewInterWin(type);
-
     _uiOpt->bindUi(ui->widget);
     _type = type;
     // 设置控件位置
