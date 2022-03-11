@@ -23,7 +23,9 @@ SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, const QRect &rect, bool 
     _type = type;
     // 设置控件位置
     ui->frame->setGeometry(rect);
+
     showMaximized();
+    hide();
 }
 
 SpringFrame::~SpringFrame()
