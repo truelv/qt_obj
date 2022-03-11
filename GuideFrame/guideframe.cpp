@@ -140,7 +140,8 @@ void GuideFrame::on_btnext_clicked()
     //index = index<_stackeCount?index:(_stackeCount-1);
     if (-1==next)
     {
-        deleteLater();
+        //deleteLater();
+        reject();
         return;
     }
 
