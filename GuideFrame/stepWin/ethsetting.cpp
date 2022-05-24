@@ -1,4 +1,5 @@
 #include "ethsetting.h"
+#include "global.h"
 #include "ui_ethsetting.h"
 
 EthSetting::EthSetting(QWidget *parent) :
@@ -8,7 +9,7 @@ EthSetting::EthSetting(QWidget *parent) :
     ui->setupUi(this);
     setStyleSheet("QLabel{color:white;font-size:50px}QLineEdit{font-size:48px;color:black}"
                   "QCheckBox::indicator{height:50px;width:50px}"
-                  "QCheckBox::indicator:checked{border-image:url(/data/zytk_reader/img/check_press.png);}");
+                  "QCheckBox::indicator:checked{border-image:url(" PROJECT_DIR_IMG"/check_press.png);}");
 }
 
 EthSetting::~EthSetting()

@@ -1,5 +1,7 @@
 #include "springframe.h"
 #include "ui_springframe.h"
+#include "base/utils/mixShell.h"
+#include "global.h"
 #include <QWSServer>
 #include <QColor>
 #include <QDebug>
@@ -7,7 +9,8 @@
 
 SpringFrame::SpringFrame(QWidget *parent, SF_TYPE type, const QRect &rect, bool btshow) :
     QDialog(parent),
-    ui(new Ui::SpringFrame)
+    ui(new Ui::SpringFrame),
+    _count(0)
 {
     // 主窗口
     ui->setupUi(this);
@@ -67,10 +70,38 @@ InterUi *SpringFrame::getUiOpt()
 
 void SpringFrame::showTimeOut(TIMEOUT_EV e, int sec)
 {
-    // sec秒后按e类事件来处理
+#if 0
+    while (true) {
+        printf("显示\n");
+        show();
+        QCoreApplication::processEvents();
+        sleep(3);
+        printf("隐藏\n");
+        hide();
+        QCoreApplication::processEvents();
+        sleep(3);
+    }
+#endif
+
+
+    if (_event==SFEV_DIALOG_REJECT)
+    {
+        hide();
+        QCoreApplication::processEvents();
+    }
+
     _event = e;
-    _count = sec;
-    QTimer::singleShot(1000, this, SLOT(countTimeOut()));
+    if (0==_count)
+    {
+        _count = sec;
+        QTimer::singleShot(1000, this, SLOT(countTimeOut()));
+    }
+    else
+        _count = sec;
+
+    show();
+    QCoreApplication::processEvents();
+
     if (SFEV_DIALOG_REJECT==e)
         exec();
     else
@@ -185,6 +216,7 @@ void SpringFrame::on_cancel_clicked()
 
 void SpringFrame::countTimeOut()
 {
+    printf("当前数字 %d\n", _count);
 #if 1
     switch (_event)
     {
@@ -204,7 +236,13 @@ void SpringFrame::countTimeOut()
         // 时间到
         switch (_event) {
         case SFEV_REBOOT:
-            printf("弹框启动重启\n");
+            // 执行重启操作
+            if(-1==exeShell(CMD_REBOOT, NULL, 0))
+            {
+                printf("执行重启，重启设备失败\n");
+            }
+            // 应用退出
+            qApp->quit();
             break;
         case SFEV_DIALOG_EXIT:
             this->deleteLater();
