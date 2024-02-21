@@ -17,15 +17,24 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTableWidget" name="tableWidget">
+      <property name="childrenCollapsible">
+       <bool>true</bool>
+      </property>
+      <widget class="QTableWidget" name="devinfo">
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>
        </property>
        <attribute name="horizontalHeaderVisible">
         <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>false</bool>
        </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
@@ -39,14 +48,9 @@
        <attribute name="verticalHeaderStretchLastSection">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
        <column>
         <property name="text">
-         <string>序号</string>
+         <string>选择</string>
         </property>
        </column>
        <column>
@@ -74,21 +78,6 @@
          <string/>
         </property>
        </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string>123</string>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string>123</string>
-        </property>
-       </item>
-       <item row="0" column="2">
-        <property name="text">
-         <string>13</string>
-        </property>
-       </item>
       </widget>
       <widget class="QWidget" name="widget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -96,6 +85,27 @@
          <widget class="QPushButton" name="scanButton">
           <property name="text">
            <string>扫描</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="updateButton">
+          <property name="text">
+           <string>提交升级包</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="logButton">
+          <property name="text">
+           <string>获取日志</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="shellButton">
+          <property name="text">
+           <string>执行脚本（shell）</string>
           </property>
          </widget>
         </item>
@@ -112,6 +122,20 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>版本号：1.0.00</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>版权所有：</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -127,6 +151,24 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>开始</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>编辑</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>设置</string>
+    </property>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

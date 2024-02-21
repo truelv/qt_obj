@@ -17,16 +17,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    api\deviceInfo.cpp \
+    base\tcpIp\multicast.c \
+    base\dstruct\linkedlist\linkedlist.c \
+    protocol/device_prot.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    api\deviceInfo.h \
+    base\tcpIp\multicast.h \
+    base\tcpIp\tcpIp_errno.h \
+    base\dstruct\linkedlist\linkedlist.h \
+    protocol/device_prot.h
 
 FORMS += \
     mainwindow.ui
 
+INCLUDEPATH += \
+    api protocol base\dstruct
+
 TRANSLATIONS += \
     WinTools_zh_CN.ts
+
+LIBS += \
+    libwsock32 libws2_32
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

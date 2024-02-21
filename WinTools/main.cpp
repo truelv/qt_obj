@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-
+#include "base/tcpIp/multicast.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

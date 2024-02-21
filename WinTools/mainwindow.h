@@ -19,11 +19,13 @@ protected:
     void resizeEvent(QResizeEvent *event);
 private slots:
     void on_splitter_splitterMoved(int pos, int index);
-
     void on_scanButton_clicked();
+    void on_updateButton_clicked();
 
 private:
     void updateScanButton();
+    void updateTable();
+    static void handRsp(char* rsp, int len);
 private:
     Ui::MainWindow *ui;
 };
