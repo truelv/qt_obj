@@ -20,15 +20,20 @@ SOURCES += \
     mainwindow.cpp \
     api\deviceInfo.cpp \
     base\tcpIp\multicast.c \
+    base\tcpIp\socket_file.c \
     base\dstruct\linkedlist\linkedlist.c \
-    protocol/device_prot.cpp
+    base\core\task_core.c \
+    protocol/device_prot.c
 
 HEADERS += \
     mainwindow.h \
     api\deviceInfo.h \
     base\tcpIp\multicast.h \
+    base\tcpIp\socket_file.h \
     base\tcpIp\tcpIp_errno.h \
     base\dstruct\linkedlist\linkedlist.h \
+    base\core\task_core.h \
+    base\core\task_core_error.h \
     protocol/device_prot.h
 
 FORMS += \

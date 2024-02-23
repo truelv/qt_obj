@@ -1,10 +1,15 @@
 #include "device_prot.h"
+#if !_WIN32
+#include "link/net_opt.h"
+#include "mac_opt.h"
+#endif
 #include <string.h>
+#include <stdio.h>
 
 int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
-    const char* ip = nullptr;
-    const char* sn = nullptr;
-    if (nullptr==rsp || nullptr==deviceinfo)
+    const char* ip = NULL;
+    const char* sn = NULL;
+    if (NULL==rsp || NULL==deviceinfo)
         return -1;
 
     // IP:172.16.70.185 SN:6ECC0BDF75F0
@@ -27,9 +32,9 @@ int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
     }
 
     memset(deviceinfo, 0, sizeof(DEVICE_INFO));
-    if (nullptr!=ip)
+    if (NULL!=ip)
         memcpy(deviceinfo->ip, ip, strlen(ip));
-    if (nullptr!=sn)
+    if (NULL!=sn)
         memcpy(deviceinfo->sn, sn, strlen(sn));
     return 0;
 }
@@ -37,13 +42,15 @@ int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
 int fill_device_info(DEVICE_INFO* deviceinfo) {
     if (NULL==deviceinfo)
         return -1;
+#if !_WIN32
     // eth ip
     get_ip("eth0", deviceinfo->ip, sizeof(deviceinfo->ip));
     // mac
     int ret = mac_to_snstr(deviceinfo->sn, sizeof(deviceinfo->sn));
     if (ret<0) {
-        printf("»ñÈ¡macÊ§°Ü,´íÎóÂë %d\n", ret);
+        printf("èŽ·å–macå¤±è´¥,é”™è¯¯ç  %d\n", ret);
     }
-    printf("»ñÈ¡mac %s\n", deviceinfo->sn);
+    printf("èŽ·å–mac %s\n", deviceinfo->sn);
+#endif
     return 0;
 }

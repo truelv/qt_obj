@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>771</width>
     <height>600</height>
    </rect>
   </property>
@@ -23,18 +23,30 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="childrenCollapsible">
+      <property name="opaqueResize">
        <bool>true</bool>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QTableWidget" name="devinfo">
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>
        </property>
        <attribute name="horizontalHeaderVisible">
-        <bool>true</bool>
+        <bool>false</bool>
        </attribute>
        <attribute name="horizontalHeaderCascadingSectionResizes">
         <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>25</number>
        </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
@@ -75,7 +87,7 @@
        </column>
        <column>
         <property name="text">
-         <string/>
+         <string>消息</string>
         </property>
        </column>
       </widget>
@@ -103,6 +115,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="rebootButton">
+          <property name="text">
+           <string>设备重启</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="shellButton">
           <property name="text">
            <string>执行脚本（shell）</string>
@@ -121,6 +140,9 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="textBrowser"/>
         </item>
         <item>
          <widget class="QLabel" name="label_2">
@@ -147,7 +169,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>771</width>
      <height>23</height>
     </rect>
    </property>
@@ -166,9 +188,15 @@
      <string>设置</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>关于</string>
+    </property>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
+   <addaction name="menu_4"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,12 +22,18 @@ private slots:
     void on_splitter_splitterMoved(int pos, int index);
     void on_scanButton_clicked();
     void on_updateButton_clicked();
+    void checkboxChange(int state);
+
+    void on_logButton_clicked();
+
+    void on_rebootButton_clicked();
 
 private:
     void updateScanButton();
     void updateTable();
-    static void handRsp(char* rsp, int len);
+    static int handRsp(char* rsp, int len);
 private:
     Ui::MainWindow *ui;
+    QMessageBox msgbox;
 };
 #endif // MAINWINDOW_H
