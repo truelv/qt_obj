@@ -23,14 +23,14 @@ private slots:
     void on_scanButton_clicked();
     void on_updateButton_clicked();
     void checkboxChange(int state);
-
     void on_logButton_clicked();
-
     void on_rebootButton_clicked();
+    void on_upButton_clicked();
 
 private:
     void updateScanButton();
     void updateTable();
+    void clearTableData();
     static int handRsp(char* rsp, int len);
 private:
     Ui::MainWindow *ui;

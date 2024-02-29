@@ -3,6 +3,7 @@
 #include "deviceInfo.h"
 #include "device_prot.h"
 #include "linkedlist/linkedlist.h"
+#include "item/checkboxinwidget.h"
 #include <unistd.h>
 #include <QDebug>
 #include <QFile>
@@ -10,15 +11,17 @@
 #include <stdio.h>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QTableWidgetItem>
 
 typedef struct {
     LINK_NODE node;
     int index;
-    DEVICE_INFO dinfo;
+    DEVICE_BASE_INFO dinfo;
     char checked;
     char R1;
     char R2;
     char R3;
+    QObject* obj;
 } DEVICE_INFO_NODE;
 // 定义一个链表维护设备
 static LINK_HEAD* hdevinfo = nullptr;
@@ -35,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
     updateScanButton();
 
     init_linkedlist(&hdevinfo);
+
+    ui->prot_v->setText(QString("%1.%2.%3").arg(PROT_VMAJOR).arg(PROT_VMINOR).arg(PROT_VPACK));
 }
 
 MainWindow::~MainWindow()
@@ -78,6 +83,9 @@ void MainWindow::updateScanButton()
 
     ui->rebootButton->setMinimumHeight(height);
     ui->rebootButton->setMaximumHeight(height);
+
+    ui->upButton->setMinimumHeight(height);
+    ui->upButton->setMaximumHeight(height);
 #if 0
     width = ui->updateButton->width();
     ft.setPixelSize(static_cast<int>(width*0.2));
@@ -97,7 +105,7 @@ void MainWindow::updateTable()
     if (nullptr==hdevinfo)
         return ;
     DEVICE_INFO_NODE* pdinfo = nullptr;
-    DEVICE_INFO* pinfo = nullptr;
+    DEVICE_BASE_INFO* pinfo = nullptr;
     LINK_NODE* pnode = nullptr;
 
     ui->devinfo->setRowCount(hdevinfo->nodecount);
@@ -106,26 +114,53 @@ void MainWindow::updateTable()
         pinfo = &pdinfo->dinfo;
         qDebug() << "index " << pdinfo->index;
 
-        QCheckBox* checkbox = new QCheckBox;
-        checkbox->setProperty("node", (int)pdinfo);
-        connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(checkboxChange(int)));
+        CheckboxInWidget* checkbox = new CheckboxInWidget;
+        qDebug() << "checkbox addr " << checkbox;
+        checkbox->setCheckProperty("node", (int)pdinfo);
+        checkbox->setCheckboxSlot(this, SLOT(checkboxChange(int)));
         if (pdinfo->checked)
-            checkbox->setChecked(true);
+            checkbox->setCheckboxChecked(true);
+        pdinfo->obj = checkbox;
+
         ui->devinfo->setCellWidget(pdinfo->index, 0, checkbox);
+        qDebug() << checkbox->height();
+        ui->devinfo->setRowHeight(pdinfo->index, 40);
         //ui->devinfo->item(pdinfo->index, 0)->seta;
         ui->devinfo->setItem(pdinfo->index, 1, new QTableWidgetItem(pinfo->sn));
         ui->devinfo->setItem(pdinfo->index, 2, new QTableWidgetItem(pinfo->ip));
+        ui->devinfo->setCellWidget(pdinfo->index, 5, new QPushButton("详细"));
     }
 
 }
 
+void MainWindow::clearTableData()
+{
+    DEVICE_INFO_NODE* pdinfo = nullptr;
+    LINK_NODE* pnode = nullptr;
+    FOREACH_LKLIST(hdevinfo, pnode) {
+        pdinfo = (DEVICE_INFO_NODE*)pnode;
+        pdinfo->obj->deleteLater();
+    }
+    CLEAR_LKLIST(hdevinfo, DEVICE_INFO_NODE, node);
+}
+
 int MainWindow::handRsp(char *rsp, int len)
 {
-    qDebug() << "接收到消息 " << rsp << ", 长度" << len;
+    qDebug() << "recv msg " << rsp << ", len " << len;
     // 拆解消息，格式化数据入链表
-    DEVICE_INFO* dinfo = (DEVICE_INFO*)rsp;
+    DEV_CMD_RSP* prsp = (DEV_CMD_RSP*)rsp;
+    switch (prsp->cmd.base.code) {
+    case CMD_RSP_CODE_OK:
+    case CMD_RSP_CODE_REDY:
+        qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
+        break;
+    default:
+        qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
+        break;
+    }
+
     DEVICE_INFO_NODE* info = new DEVICE_INFO_NODE;
-    memcpy(&info->dinfo, dinfo, sizeof(DEVICE_INFO));
+    memcpy(&info->dinfo, &prsp->cmd.devbinfo, sizeof(DEVICE_BASE_INFO));
 
     info->index = hdevinfo->nodecount;
     info->checked = 0;
@@ -145,7 +180,7 @@ void MainWindow::on_scanButton_clicked()
 {
     // 扫描局域网内设备
     qDebug() << "点击扫描";
-    CLEAR_LKLIST(hdevinfo, DEVICE_INFO_NODE, node);
+    clearTableData();
     scanDevice(handRsp);
     // 扫描完成后，更新表
     updateTable();
@@ -238,6 +273,7 @@ void MainWindow::on_logButton_clicked()
     }
 }
 
+// 重启选中设备
 void MainWindow::on_rebootButton_clicked()
 {
     if (hdevinfo->nodecount<=0) {
@@ -255,6 +291,47 @@ void MainWindow::on_rebootButton_clicked()
             continue;
         flag = 1;
         devReboot(&pdinfo->dinfo);
+        //
+        usleep(30000);
+    }
+
+    if (0==flag) {
+        msgbox.setText(tr("没有选中设备"));
+        msgbox.exec();
+    }
+}
+
+// 提交后台服务升级包
+void MainWindow::on_upButton_clicked()
+{
+
+    QFileDialog fdialog(this);
+    fdialog.exec();
+    const QStringList& filenames = fdialog.selectedFiles();
+
+    //qDebug() << filenames << " " << filenames.length();
+
+    if (filenames.length()<1) {
+        msgbox.setText(tr("没有选择文件"));
+        msgbox.exec();
+        return ;
+    }
+
+    if (hdevinfo->nodecount<=0) {
+        msgbox.setText(tr("没有找到设备"));
+        msgbox.exec();
+        return ;
+    }
+
+    DEVICE_INFO_NODE* pdinfo = nullptr;
+    LINK_NODE* pnode = nullptr;
+    char flag = 0;
+    FOREACH_LKLIST(hdevinfo, pnode) {
+        pdinfo = (DEVICE_INFO_NODE*)pnode;
+        if (0==pdinfo->checked)
+            continue;
+        flag = 1;
+        upServer(filenames[0].toUtf8(), &pdinfo->dinfo);
         //
         usleep(30000);
     }

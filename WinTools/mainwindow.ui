@@ -36,11 +36,14 @@
          <height>0</height>
         </size>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
        <property name="textElideMode">
         <enum>Qt::ElideNone</enum>
        </property>
        <attribute name="horizontalHeaderVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </attribute>
        <attribute name="horizontalHeaderCascadingSectionResizes">
         <bool>false</bool>
@@ -129,6 +132,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="upButton">
+          <property name="text">
+           <string>服务更新</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -145,11 +155,46 @@
          <widget class="QTextBrowser" name="textBrowser"/>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>版本号：1.0.00</string>
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
+          <property name="topMargin">
+           <number>0</number>
           </property>
-         </widget>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Protv：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="prot_v">
+            <property name="text">
+             <string>0.0.0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,3">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Appv：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="app_v">
+            <property name="text">
+             <string>0.0.0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="label">

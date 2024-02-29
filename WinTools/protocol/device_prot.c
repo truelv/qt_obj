@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 
-int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
+int paser_device_info(const char* rsp, DEVICE_BASE_INFO* deviceinfo) {
     const char* ip = NULL;
     const char* sn = NULL;
     if (NULL==rsp || NULL==deviceinfo)
@@ -31,7 +31,7 @@ int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
         p++;
     }
 
-    memset(deviceinfo, 0, sizeof(DEVICE_INFO));
+    memset(deviceinfo, 0, sizeof(DEVICE_BASE_INFO));
     if (NULL!=ip)
         memcpy(deviceinfo->ip, ip, strlen(ip));
     if (NULL!=sn)
@@ -39,7 +39,7 @@ int paser_device_info(const char* rsp, DEVICE_INFO* deviceinfo) {
     return 0;
 }
 
-int fill_device_info(DEVICE_INFO* deviceinfo) {
+int fill_device_info(DEVICE_BASE_INFO* deviceinfo) {
     if (NULL==deviceinfo)
         return -1;
 #if !_WIN32
@@ -48,9 +48,31 @@ int fill_device_info(DEVICE_INFO* deviceinfo) {
     // mac
     int ret = mac_to_snstr(deviceinfo->sn, sizeof(deviceinfo->sn));
     if (ret<0) {
-        printf("èŽ·å–macå¤±è´¥,é”™è¯¯ç  %d\n", ret);
+        printf("get mac fail,errno %d\n", ret);
     }
-    printf("èŽ·å–mac %s\n", deviceinfo->sn);
+    printf("get mac %s\n", deviceinfo->sn);
 #endif
+    return 0;
+}
+
+int check_base_cmd(DEV_CMD_BASE* bcmd) {
+    if (NULL==bcmd)
+        return -CMD_RSP_CODE_PARAM;
+
+    // Õâ¼¸¸öÃüÁîÖ»ÓÃµ½ÁË»ù´¡ÃüÁî,²»¿¼ÂÇÐ­Òé°æ±¾²îÒì
+     switch (bcmd->cmd) {
+        case CMD_DEVICE_SCAN:
+        case CMD_SERVER_UP:
+        case CMD_DEV_REBOOT:
+            return 0;
+        break;
+        default:
+        break;
+     }
+
+    if (PROT_VMAJOR!=bcmd->vMajor 
+    || PROT_VMINOR!=bcmd->vMinor
+    || PROT_VPACK!=bcmd->vtail)
+        return -CMD_RSP_CODE_PROT_VER;
     return 0;
 }
