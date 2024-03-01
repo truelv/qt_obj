@@ -15,6 +15,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    // 显示日志
+    void apandeLogs(const QString& text);
+
+    static MainWindow* itent;
 
 protected:
     void resizeEvent(QResizeEvent *event);

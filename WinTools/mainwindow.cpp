@@ -4,6 +4,7 @@
 #include "device_prot.h"
 #include "linkedlist/linkedlist.h"
 #include "item/checkboxinwidget.h"
+#include "protocol/device_prot.h"
 #include <unistd.h>
 #include <QDebug>
 #include <QFile>
@@ -12,6 +13,10 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QTableWidgetItem>
+#include <QDateTime>
+#include <QScrollBar>
+
+MainWindow* MainWindow::itent = NULL;
 
 typedef struct {
     LINK_NODE node;
@@ -51,6 +56,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::apandeLogs(const QString &text)
+{
+    if (ui->textBrowser->toPlainText().size()>1024)
+        ui->textBrowser->clear();
+    ui->textBrowser->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
+    ui->textBrowser->insertPlainText(QDateTime::currentDateTime().toString("[yy-MM-dd hh:mm:ss] ")+text+"\n");
+    QScrollBar* vroll = ui->textBrowser->verticalScrollBar();
+    vroll->setSliderPosition(vroll->maximum());
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
@@ -60,30 +75,43 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::updateScanButton()
 {
     // 扫描按键修改尺寸
-    int width = ui->scanButton->width();
-    if (width<=0)
-        return ;
+    //int width = ui->scanButton->width();
+    //if (width<=0)
+    //    return ;
+    int width = 100;
     QFont ft;
     ft.setPixelSize(static_cast<int>(width*0.2));
     //qDebug() << "width " << width;
     int height = static_cast<int>(width*0.4);
 
+    //ui->scanButton->setMinimumWidth(width);
+    //ui->scanButton->setMaximumWidth(width);
     ui->scanButton->setMinimumHeight(height);
     ui->scanButton->setMaximumHeight(height);
     ui->scanButton->setFont(ft);
 
+    //ui->updateButton->setMinimumWidth(width);
+    //ui->updateButton->setMaximumWidth(width);
     ui->updateButton->setMinimumHeight(height);
     ui->updateButton->setMaximumHeight(height);
 
+    //ui->logButton->setMinimumWidth(width);
+    //ui->logButton->setMaximumWidth(width);
     ui->logButton->setMinimumHeight(height);
     ui->logButton->setMaximumHeight(height);
 
+    //ui->shellButton->setMinimumWidth(width);
+    //ui->shellButton->setMaximumWidth(width);
     ui->shellButton->setMinimumHeight(height);
     ui->shellButton->setMaximumHeight(height);
 
+    //ui->rebootButton->setMinimumWidth(width);
+    //ui->rebootButton->setMaximumWidth(width);
     ui->rebootButton->setMinimumHeight(height);
     ui->rebootButton->setMaximumHeight(height);
 
+    //ui->upButton->setMinimumWidth(width);
+    //ui->upButton->setMaximumWidth(width);
     ui->upButton->setMinimumHeight(height);
     ui->upButton->setMaximumHeight(height);
 #if 0
@@ -152,10 +180,13 @@ int MainWindow::handRsp(char *rsp, int len)
     switch (prsp->cmd.base.code) {
     case CMD_RSP_CODE_OK:
     case CMD_RSP_CODE_REDY:
-        qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
+        //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
+        itent->apandeLogs(QString(cmd_to_string((int)prsp->cmd.base.cmd))+" 执行成功");
         break;
     default:
-        qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
+        //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
+        itent->apandeLogs(QString(cmd_to_string((int)prsp->cmd.base.cmd))+" 执行失败，错误原因："
+                          +QString(cmd_rsp_code_to_string(prsp->cmd.base.code)));
         break;
     }
 
@@ -179,10 +210,12 @@ void MainWindow::on_splitter_splitterMoved(int pos, int index)
 void MainWindow::on_scanButton_clicked()
 {
     // 扫描局域网内设备
-    qDebug() << "点击扫描";
+    //qDebug() << "点击扫描";
+    apandeLogs("开始扫描设备...");
     clearTableData();
     scanDevice(handRsp);
     // 扫描完成后，更新表
+    apandeLogs("更新列表");
     updateTable();
 }
 

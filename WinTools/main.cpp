@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     printf("build time %s\n", __TIME__);
     QApplication a(argc, argv);
     MainWindow w;
+    w.itent = &w;
     int ret = start_task_core(&task_entry, 2);
     if (ret<0) {
         printf("start task core errro, ret %d\n", ret);

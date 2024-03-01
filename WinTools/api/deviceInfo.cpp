@@ -3,6 +3,7 @@
 #include "protocol/device_prot.h"
 #include "base/tcpIp/socket_file.h"
 #include "base/core/task_core.h"
+#include "mainwindow.h"
 #include <stdio.h>
 #include <QtDebug>
 extern TASK_ENTRY* task_entry;
@@ -11,15 +12,17 @@ int scanDevice(handMulticastRsp cb) {
     DEV_CMD* cmd = (DEV_CMD*)&rsp;
     cmd->base.cmd = CMD_DEVICE_SCAN;
 
-    qDebug() << "执行扫描设备...";
+    //qDebug() << "执行扫描设备...";
     if (nullptr==cb)
         return -1;
     int ret = multicast_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
                                      "224.0.1.0", 10000, cb, 100);
     if (ret<0) {
-        qDebug() << "发送失败, 错误码 " << ret;
+        //qDebug() << "发送失败, 错误码 " << ret;
+        MainWindow::itent->apandeLogs("设备扫描 命令执行失败，错误码 " + QString::number(ret));
     }
-    qDebug() << "执行扫描设备结束";
+    //qDebug() << "执行扫描设备结束";
+    MainWindow::itent->apandeLogs("设备扫描 命令执行结束");
     return  0;
 }
 
@@ -90,14 +93,18 @@ int getDevlog(const char* path, DEVICE_BASE_INFO *dinfo)
     DEV_CMD* cmd = (DEV_CMD*)&rsp;
     cmd->base.cmd = CMD_GET_LOGS;
 
-    qDebug() << "发送udp地址 " << dinfo->ip;
+    //qDebug() << "发送udp地址 " << dinfo->ip;
+    MainWindow::itent->apandeLogs("日志获取... 从 "+QString(dinfo->ip));
     int ret = udp_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD), dinfo->ip, 10000, rspCheck, 100);
     if (ret<0) {
-        qDebug() << "发送失败, 错误码 " << ret;
+        //qDebug() << "发送失败, 错误码 " << ret;
+        MainWindow::itent->apandeLogs("日志获取 命令执行失败，错误码 " + QString::number(ret));
         return -1;
     }
+    MainWindow::itent->apandeLogs("日志获取 命令执行结束");
 
-    qDebug() << "接收文件" << path;
+    //qDebug() << "接收文件" << path;
+    //MainWindow::itent->apandeLogs("日志获取 接收文件... "+QString(path));
     // 如果成功，开始发送文件直到结束
     DEV_FILE_SEND* fucarg = new DEV_FILE_SEND;
     fucarg->dinfo = dinfo;
