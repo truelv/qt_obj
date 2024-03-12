@@ -22,6 +22,7 @@ SOURCES += \
     api\deviceInfo.cpp \
     base\tcpIp\multicast.c \
     base\tcpIp\socket_file.c \
+    base\tcpIp\raw_socket.c \
     base\dstruct\linkedlist\linkedlist.c \
     base\core\task_core.c \
     protocol/device_prot.c
@@ -32,6 +33,7 @@ HEADERS += \
     api\deviceInfo.h \
     base\tcpIp\multicast.h \
     base\tcpIp\socket_file.h \
+    base\tcpIp\raw_socket.h \
     base\tcpIp\tcpIp_errno.h \
     base\dstruct\linkedlist\linkedlist.h \
     base\core\task_core.h \

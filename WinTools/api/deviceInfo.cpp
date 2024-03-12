@@ -2,12 +2,13 @@
 #include "base/tcpIp/multicast.h"
 #include "protocol/device_prot.h"
 #include "base/tcpIp/socket_file.h"
+#include "base/tcpIp/raw_socket.h"
 #include "base/core/task_core.h"
 #include "mainwindow.h"
 #include <stdio.h>
 #include <QtDebug>
 extern TASK_ENTRY* task_entry;
-int scanDevice(handMulticastRsp cb) {
+int scanDevice(const char *ifIp, handMulticastRsp cb) {
     CMD_RSP_INIT(rsp);
     DEV_CMD* cmd = (DEV_CMD*)&rsp;
     cmd->base.cmd = CMD_DEVICE_SCAN;
@@ -16,11 +17,21 @@ int scanDevice(handMulticastRsp cb) {
     if (nullptr==cb)
         return -1;
     int ret = multicast_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
-                                     "224.0.1.0", 10000, cb, 100);
+                                     "224.0.1.0", 10000, ifIp, cb, 100);
     if (ret<0) {
         //qDebug() << "发送失败, 错误码 " << ret;
-        MainWindow::itent->apandeLogs("设备扫描 命令执行失败，错误码 " + QString::number(ret));
+        MainWindow::itent->apandeLogs("设备扫描 命令2执行失败，错误码 " + QString::number(ret));
     }
+
+    unsigned char destmac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+    unsigned char srcmac[6] = {0xAA, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+    // 处理没有设置ip的设备，启用mac方式扫描，再次扫描
+    ret = raw_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
+                           destmac, srcmac, IPPROTO_NONE, cb, 100);
+    if (ret<0) {
+        MainWindow::itent->apandeLogs("设备扫描 命令2执行失败，错误码 " + QString::number(ret));
+    }
+
     //qDebug() << "执行扫描设备结束";
     MainWindow::itent->apandeLogs("设备扫描 命令执行结束");
     return  0;
@@ -47,6 +58,11 @@ static int rspCheck(char* rspstr, int len) {
     return  ret;
 }
 
+static void file_status(int pkgindex, int pkgcount, int errcode) {
+    printf("file status %d/%d\n", pkgindex, pkgcount);
+    emit MainWindow::itent->sig_progress_update(pkgindex, pkgcount-1);
+}
+
 typedef struct {
     DEVICE_BASE_INFO* dinfo;
     char file[128];
@@ -55,13 +71,13 @@ typedef struct {
 static void send_file(void* arg) {
     DEV_FILE_SEND* sarg = (DEV_FILE_SEND*)arg;
     printf("send file task ip %s, file %s\n", sarg->dinfo->ip, sarg->file);
-    ip_send_file(sarg->dinfo->ip, 10002, sarg->file);
+    ip_send_file(sarg->dinfo->ip, 10002, sarg->file, file_status);
     printf("%s file send over\n", sarg->file);
 }
 static void recv_file(void* arg) {
     DEV_FILE_SEND* sarg = (DEV_FILE_SEND*)arg;
     printf("recv file task ip %s, file %s\n", sarg->dinfo->ip, sarg->file);
-    ip_recv_file(sarg->dinfo->ip, 10002, sarg->file);
+    ip_recv_file(sarg->dinfo->ip, 10002, sarg->file, file_status);
     printf("%s file recv over\n", sarg->file);
 }
 

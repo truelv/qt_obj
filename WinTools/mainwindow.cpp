@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent)
     init_linkedlist(&hdevinfo);
 
     ui->prot_v->setText(QString("%1.%2.%3").arg(PROT_VMAJOR).arg(PROT_VMINOR).arg(PROT_VPACK));
+    ui->progress_status->setValue(0);
+
+    connect(this, SIGNAL(sig_progress_update(int, int)), this, SLOT(slot_progress_update(int,int)));
 }
 
 MainWindow::~MainWindow()
@@ -181,7 +184,7 @@ int MainWindow::handRsp(char *rsp, int len)
     case CMD_RSP_CODE_OK:
     case CMD_RSP_CODE_REDY:
         //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
-        itent->apandeLogs(QString(cmd_to_string((int)prsp->cmd.base.cmd))+" 执行成功");
+        itent->apandeLogs("找到设备 "+QString(prsp->cmd.devbinfo.sn));
         break;
     default:
         //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
@@ -213,7 +216,8 @@ void MainWindow::on_scanButton_clicked()
     //qDebug() << "点击扫描";
     apandeLogs("开始扫描设备...");
     clearTableData();
-    scanDevice(handRsp);
+    const char* ifip = ui->if_ip->text().toUtf8();
+    scanDevice(ifip, handRsp);
     // 扫描完成后，更新表
     apandeLogs("更新列表");
     updateTable();
@@ -373,4 +377,12 @@ void MainWindow::on_upButton_clicked()
         msgbox.setText(tr("没有选中设备"));
         msgbox.exec();
     }
+}
+
+void MainWindow::slot_progress_update(int index, int count)
+{
+    qDebug() << index << " " << count;
+    if (0==index)
+        ui->progress_status->setRange(0, count);
+    ui->progress_status->setValue(index);
 }

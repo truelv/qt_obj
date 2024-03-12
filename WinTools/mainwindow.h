@@ -19,6 +19,8 @@ public:
     void apandeLogs(const QString& text);
 
     static MainWindow* itent;
+signals:
+    void sig_progress_update(int index, int count);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -30,6 +32,8 @@ private slots:
     void on_logButton_clicked();
     void on_rebootButton_clicked();
     void on_upButton_clicked();
+    // 修改进度条
+    void slot_progress_update(int index, int count);
 
 private:
     void updateScanButton();
