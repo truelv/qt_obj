@@ -62,7 +62,7 @@ int RTCManager::ConnectServer(const char *addr, unsigned int port, const char* c
     // 请求
     char buffer[64] = {0};
     snprintf(buffer, sizeof(buffer), "GET /sign_in?%s HTTP/1.0\r\n\r\n", _client_name.c_str());
-    Log(buffer);
+    //Log(buffer);
     int err = _control_socket->Connect(_server_address);
     if (SOCKET_ERROR==err) {
         Error("连接服务失败");

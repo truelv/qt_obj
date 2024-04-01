@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,18 +36,31 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     rtcmanager.cpp \
-    localcamera.cpp
+    localcamera.cpp \
+    rmotecamera.cpp \
+    serverconnect.cpp \
+    base/jsonlibC/cJSON.c \
+    rtppeerconnect.cpp \
+    base/rtc/vcm_capturer.cc \
+    base/rtc/test_video_capturer.cc \
+    base/rtc/video_track_source.cc
 
 HEADERS += \
         mainwindow.h \
     rtcmanager.h \
-    localcamera.h
+    localcamera.h \
+    rmotecamera.h \
+    serverconnect.h \
+    base/jsonlibC/cJSON.h \
+    rtppeerconnect.h
 
 FORMS += \
         mainwindow.ui \
-    localcamera.ui
+    localcamera.ui \
+    rmotecamera.ui
 
-INCLUDEPATH += /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src \
+INCLUDEPATH += base/jsonlibC \
+    /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src \
      /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/abseil-cpp \
      /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/libyuv/include
 
