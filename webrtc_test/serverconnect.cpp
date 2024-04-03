@@ -94,6 +94,7 @@ void ServerConnect::sendData(const char *text, unsigned int len)
     _lock_socket.unlock();
 }
 
+#include "rtppeerconnect.h"
 void ServerConnect::doServerMsg(const char* type, cJSON* root)
 {
     //qDebug() << "type " << type;
@@ -111,11 +112,12 @@ void ServerConnect::doServerMsg(const char* type, cJSON* root)
         // 呼叫命令
         const char* state = cJSON_GetObjectItem(root, "state")->valuestring;
         qDebug() << "state:" << state;
-    } else if (!strncmp(type, "RE_BASICS_SETTING", strlen(type)+1)) {
+        //RtpPeerConnect::getInstent()->connectPeer();
+    } else if (!strncmp(type, "BASICS_SETTING", strlen(type)+1)) {
         // 服务下发一些配置
-    } else if (!strncmp(type, "RE_GET_OFFER", strlen(type)+1)) {
+    } else if (!strncmp(type, "GET_OFFER", strlen(type)+1)) {
         // 服务下发offer
-    } else if (!strncmp(type, "RE_ANSWER", strlen(type)+1)) {
+    } else if (!strncmp(type, "ANSWER", strlen(type)+1)) {
         // 服务下发answer
     } else if (!strncmp(type, "OPEN_DOOR", strlen(type)+1)) {
         // 挂断，开门

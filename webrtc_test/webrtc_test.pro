@@ -22,6 +22,8 @@ DEFINES += WEBRTC_POSIX
 #DEFINES += HAVE_WEBRTC_VOICE  WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE \
 #    WEBRTC_USE_H264 WEBRTC_INITIALIZE_FFMPEG  FFMPEG_H264_DECODER
 DEFINES += QT_NO_KEYWORDS
+#
+#DEFINES += WEBRTC_EXTERNAL_JSON
 
 
 
@@ -43,7 +45,8 @@ SOURCES += \
     rtppeerconnect.cpp \
     base/rtc/vcm_capturer.cc \
     base/rtc/test_video_capturer.cc \
-    base/rtc/video_track_source.cc
+    base/rtc/video_track_source.cc \
+    serverconnectbase.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +55,8 @@ HEADERS += \
     rmotecamera.h \
     serverconnect.h \
     base/jsonlibC/cJSON.h \
-    rtppeerconnect.h
+    rtppeerconnect.h \
+    serverconnectbase.h
 
 FORMS += \
         mainwindow.ui \
@@ -62,7 +66,9 @@ FORMS += \
 INCLUDEPATH += base/jsonlibC \
     /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src \
      /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/abseil-cpp \
-     /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/libyuv/include
+     /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/libyuv/include \
+    /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/protobuf/conformance/third_party \
+/media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/build/linux/debian_sid_amd64-sysroot/usr/include/jsoncpp
 
 
 
