@@ -64,18 +64,18 @@ FORMS += \
     rmotecamera.ui
 
 INCLUDEPATH += base/jsonlibC \
-    /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src \
-     /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/abseil-cpp \
-     /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/libyuv/include \
-    /media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/third_party/protobuf/conformance/third_party \
-/media/cp/1f4ae5c9-7b98-4e3d-b846-2a0bd3c8cfa2/home/zhh/work/video/webrtc/webrtc/src/build/linux/debian_sid_amd64-sysroot/usr/include/jsoncpp
+    base/rtc \
+    base/rtc/third_party/abseil-cpp \
+    base/rtc/third_party/libyuv/include \
+    base/rtc/third_party/protobuf/conformance/third_party \
+    base/rtc/build/linux/debian_sid_amd64-sysroot/usr/include/jsoncpp
 
 
 
-unix:!macx: LIBS += -L$$PWD/../../video/webrtc/webrtc/src/out/linux_x64_g++_release/obj/ -lwebrtc
+unix:!macx: LIBS += -L$$PWD/base/rtc/ -lwebrtc
 #INCLUDEPATH += $$PWD/../../video/webrtc/webrtc/src/out/linux_x64_g++_release/obj
 #DEPENDPATH += $$PWD/../../video/webrtc/webrtc/src/out/linux_x64_g++_release/obj
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../video/webrtc/webrtc/src/out/linux_x64_g++_release/obj/libwebrtc.a
+unix:!macx: PRE_TARGETDEPS += $$PWD/base/rtc/libwebrtc.a
 
 unix:!macx: LIBS += -L$$PWD/../../../../../../../../usr/lib/x86_64-linux-gnu/ -ldl -lX11
 #INCLUDEPATH += $$PWD/../../../../../../../../usr/lib/x86_64-linux-gnu
