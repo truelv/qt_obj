@@ -16,18 +16,20 @@ int scanDevice(const char *ifIp, handMulticastRsp cb) {
     //qDebug() << "执行扫描设备...";
     if (nullptr==cb)
         return -1;
+
+    // 扫描ip设置正常的设备
     int ret = multicast_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
-                                     "224.0.1.0", 10000, ifIp, cb, 100);
+                                     (char*)"224.0.1.0", 10000, ifIp, cb, 100);
     if (ret<0) {
         //qDebug() << "发送失败, 错误码 " << ret;
         MainWindow::itent->apandeLogs("设备扫描 命令2执行失败，错误码 " + QString::number(ret));
     }
 
     unsigned char destmac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    unsigned char srcmac[6] = {0xAA, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+    //unsigned char srcmac[6] = {0xAA, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
     // 处理没有设置ip的设备，启用mac方式扫描，再次扫描
-    ret = raw_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
-                           destmac, srcmac, IPPROTO_NONE, cb, 100);
+    ret = arp_sendmsg_wait((char*)cmd, sizeof(DEV_CMD_RSP), sizeof(DEV_CMD),
+                           destmac, cb, 100);
     if (ret<0) {
         MainWindow::itent->apandeLogs("设备扫描 命令2执行失败，错误码 " + QString::number(ret));
     }
@@ -39,6 +41,7 @@ int scanDevice(const char *ifIp, handMulticastRsp cb) {
 
 // 对收到的命令恢复校验
 static int rspCheck(char* rspstr, int len) {
+    (void)len;
     int ret = -1;
     // 验证DEV_CMD_RSP
     DEV_CMD_RSP* rsp = (DEV_CMD_RSP*)rspstr;
@@ -59,6 +62,7 @@ static int rspCheck(char* rspstr, int len) {
 }
 
 static void file_status(int pkgindex, int pkgcount, int errcode) {
+    (void)errcode;
     printf("file status %d/%d\n", pkgindex, pkgcount);
     emit MainWindow::itent->sig_progress_update(pkgindex, pkgcount-1);
 }

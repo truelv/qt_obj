@@ -3,6 +3,12 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#if !__WIN32
+#include <linux/if_packet.h>
+#endif
 
 typedef struct {
     unsigned char destmac[6];
@@ -37,11 +43,11 @@ int send_pkg() {
     return 0;
 }
 
-#define PRINTF_HEX(buff, len) {\
-    for (int i=0;i<len;i++) \
-        printf("%02x", buff[i]); \
+#define PRINTF_HEX(buff, len) ({\
+    for (unsigned int i=0;i<(len);i++) \
+        printf("%02x", (buff)[i]); \
     printf("\n"); \
-}
+})
 
 int recv_pkg(char* recvbuff, int bufflen) {
     int ret = 0;
@@ -57,8 +63,6 @@ int recv_pkg(char* recvbuff, int bufflen) {
     struct sockaddr_in srcaddr;
 	socklen_t addr_length = sizeof(struct sockaddr_in);
 
-    char ipsrc[16] = {0};
-    char destsrc[16] = {0};
     while (1) {
         ret = recvfrom(sockfd, recvbuff, bufflen, 0, (struct sockaddr *)(&srcaddr), &addr_length);
         if (-1==ret) {
@@ -73,6 +77,8 @@ int recv_pkg(char* recvbuff, int bufflen) {
         PRINTF_HEX(phead->srcmac, sizeof(phead->srcmac));
 
 #if !__WIN32
+        char ipsrc[16] = {0};
+        char destsrc[16] = {0};
         inet_ntop(AF_INET, phead->src_addr, ipsrc, sizeof(ipsrc));
         inet_ntop(AF_INET, phead->dest_addr, destsrc, sizeof(destsrc));
         printf("源地址 %s\n", ipsrc);
@@ -96,12 +102,16 @@ static void* wait_raw_data(void* arg) {
     // 设置线程名字
     while (1) {
         callArg->len = sizeof(struct sockaddr_in);
+        //printf("wait raw data\n");
         ret = recvfrom(callArg->socketfd, callArg->recvBuff, sizeof(callArg->recvBuff), 0,
                        (struct sockaddr *)(&(callArg->srcaddr)), &(callArg->len));
         if (-1==ret) {
             printf("接收消息失败, 错误码 %d\n", errno);
             continue;
         }
+
+        // 返回接收数据长度
+        callArg->datalen = ret;
 
         // 如果设置了回调函数处理
         if (NULL!=body->fn) {
@@ -111,7 +121,7 @@ static void* wait_raw_data(void* arg) {
     return NULL;
 }
 
-int raw_listen_start(RAW_MSG_BODY** entry, int protocalType) {
+int raw_listen_start(RAW_MSG_BODY** entry, handRawMsg cb, int protocalType) {
 #if __WIN32
     SOCKET sockfd = 0;
 #else
@@ -136,18 +146,29 @@ int raw_listen_start(RAW_MSG_BODY** entry, int protocalType) {
     }
 #endif
 
+#if __WIN32
     // IPPROTO_ICMP
     sockfd = socket(AF_INET, SOCK_RAW, protocalType);
-#if __WIN32
     if (INVALID_SOCKET==sockfd) {
         WSACleanup();
 #else
+    switch (protocalType) {
+        case IPPROTO_ICMP:
+            sockfd = socket(AF_INET, SOCK_RAW, protocalType);
+        break;
+        default:
+            sockfd = socket(PF_PACKET, SOCK_RAW, protocalType);
+        break;
+    }
+    
     if (sockfd<0) {
 #endif
         ret = -TCPIPERR_SOCKET_CREATE;
         goto free_exit;
     }
 
+    body->callbackArg.socketfd = sockfd;
+    body->fn = cb;
     // 接收端,等待接受数据
     ret = pthread_create(&(body->pid), NULL, wait_raw_data, body);
     if (ret<0) {
@@ -194,13 +215,16 @@ int raw_listen_stop(RAW_MSG_BODY *entry) {
     return 0;
 }
 
-int raw_sendmsg(char *buff, int bufflen, int sendsize, unsigned char destmac[], unsigned char srcmac[], int protocalType)
+int raw_sendmsg(char *buff, int bufflen, int sendsize, unsigned char destmac[6], 
+    unsigned char srcmac[6], unsigned short protocalType)
 {
     return  raw_sendmsg_wait(buff, bufflen, sendsize, destmac, srcmac, protocalType, NULL, 0);
 }
 
-int raw_sendmsg_wait(char *buff, int bufflen, int sendsize, unsigned char destmac[6], unsigned char srcmac[6], int protocalType, handRawRsp callbk, unsigned int ms)
+int raw_sendmsg_wait(char *buff, int bufflen, int sendsize, unsigned char destmac[6], 
+    unsigned char srcmac[6], unsigned short protocalType, handRawRsp callbk, unsigned int ms)
 {
+    (void)ms;
     int selret = 0;
 #if __WIN32
     SOCKET sockfd = 0;
@@ -211,7 +235,7 @@ int raw_sendmsg_wait(char *buff, int bufflen, int sendsize, unsigned char destma
     if (NULL==buff || bufflen<=0 || sendsize <=0)
         return -TCPIPERR_CHECK_PARAM;
 
-    char* psend = (char*)calloc(sendsize+14, 1);
+    unsigned char* psend = (unsigned char*)calloc(sendsize+14, 1);
     if (NULL==psend)
         return -TCPIPERR_MALLOCA;
 
@@ -226,12 +250,13 @@ int raw_sendmsg_wait(char *buff, int bufflen, int sendsize, unsigned char destma
     }
 #endif
 
+#if __WIN32
     // IPPROTO_ICMP
     sockfd = socket(AF_INET, SOCK_RAW, protocalType);
-#if __WIN32
     if (INVALID_SOCKET==sockfd) {
         WSACleanup();
 #else
+    sockfd = socket(PF_PACKET, SOCK_RAW, htons(protocalType));
     if (sockfd<0) {
 #endif
         ret = -TCPIPERR_SOCKET_CREATE;
@@ -239,19 +264,35 @@ int raw_sendmsg_wait(char *buff, int bufflen, int sendsize, unsigned char destma
     }
 
     // 填充 psend
-    memcpy(psend, srcmac, 6);
-    memcpy(psend+6, destmac, 6);
-    psend[12] = 0x00;
-    psend[13] = 0x08;
+    memcpy(psend, destmac, 6);
+    memcpy(psend+6, srcmac, 6);
+    psend[12] = (protocalType>>8)&0xff;
+    psend[13] = protocalType&0xff;
+    //psend[12] = 0x08;
+    //psend[13] = 0x06;
     memcpy(psend+14, buff, sendsize);
 
-    struct sockaddr_in cliaddr;
-    memset(&cliaddr,0,sizeof(cliaddr));
+#if __WIN32
+#else
+    struct sockaddr_ll  cliaddr;
+    bzero(&cliaddr, sizeof(cliaddr));
+    int index = if_nametoindex ("enp0s3");
+    printf("iface index %d\n", index);
+    
+    cliaddr.sll_ifindex = if_nametoindex ("enp0s3");
+    //cliaddr.sll_family = AF_PACKET;
+    //memcpy (cliaddr.sll_addr, srcmac, 6);
+    //cliaddr.sll_halen = htons (6);
     // 数据发送
-    ret = sendto(sockfd, buff, sendsize, 0, (struct sockaddr*)(&cliaddr), sizeof(cliaddr));
-    if (-1==ret) {
+    ret = sendto(sockfd, psend, sendsize+14, 0, (struct sockaddr*)(&cliaddr), sizeof(cliaddr));
+#endif
+    if (ret<0) {
+#if __WIN32
+        printf("send raw fail, errno %d\n", WSAGetLastError());
+#else
         printf("send raw fail, errno %d\n", errno);
-        ret = -TCPIPERR_SENDMSG;
+#endif
+        ret = -TCPIPERR_SEND_DATA;
         goto close_exit;
     }
 
@@ -303,3 +344,182 @@ free_exit:
     psend = NULL;
     return ret;
 }
+
+int arp_sendmsg_wait(char *strbuff, unsigned int bufflen, unsigned int sendsize, unsigned char destmac[6],
+    handRawRsp callbk, unsigned int ms) {
+    (void)ms;
+    int selret = 0;
+#if __WIN32
+    SOCKET sockfd = 0;
+#else
+    int sockfd = 0;
+#endif
+    int ret = 0;
+    if (NULL==strbuff)
+        return -TCPIPERR_CHECK_PARAM;
+
+    // MAC + ARP = 60
+    unsigned char* psend = (unsigned char*)calloc(sendsize+60, 1);
+    if (NULL==psend)
+        return -TCPIPERR_MALLOCA;
+
+    RAW_MAC_ARP_HEAD* parp = (RAW_MAC_ARP_HEAD*)psend;
+
+#if __WIN32
+    WORD sockVersion=MAKEWORD(2,2);
+    WSADATA wsaData;//WSADATA结构体变量的地址值
+    if(WSAStartup(sockVersion, &wsaData)!=0)
+    {
+        printf("WSAStartup() error!");
+        free(psend);
+        return 0;
+    }
+#endif
+
+#if __WIN32
+    // IPPROTO_ICMP
+    sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+    if (INVALID_SOCKET==sockfd) {
+        WSACleanup();
+#else
+    sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+    if (sockfd<0) {
+#endif
+        ret = -TCPIPERR_SOCKET_CREATE;
+        goto free_exit;
+    }
+
+    // 获取本机mac地址,ip地址
+
+    // 填充 psend
+    // mac
+    memcpy(parp->destmac, destmac, 6);
+    // 本机地址填充
+    //memcpy(psend+6, "", 6);
+    parp->srcmac[0] =  0x08;
+    parp->srcmac[1] =  0x00;
+    parp->srcmac[2] =  0x27;
+    parp->srcmac[3] =  0xb6;
+    parp->srcmac[4] =  0x19;
+    parp->srcmac[5] =  0x64;
+    
+#if __WIN32
+    parp->type[0] = 0x08;
+    parp->type[1] = 0x06;
+#else
+    parp->type[0] = (ETH_P_ARP>>8)&0xff;
+    parp->type[1] = ETH_P_ARP&0xff;
+#endif
+    //psend[12] = 0x08;
+    //psend[13] = 0x06;
+    // arp
+    parp->hardtype[0] = 0x00;
+    parp->hardtype[1] = 0x01;
+
+    parp->protocoltype[0] = 0x08;
+    parp->protocoltype[1] = 0x00;
+
+    parp->hardsize = 0x06;
+    parp->protocolsize = 0x04;
+
+    parp->opcode[0] = 0x00;
+    parp->opcode[1] = 0x01;
+
+    memcpy(parp->sendmac, parp->srcmac, 6);
+    parp->sendip[0] = 172;
+    parp->sendip[1] = 16;
+    parp->sendip[2] = 70;
+    parp->sendip[3] = 182;
+
+    // target mac
+    // target ip
+    parp->targetip[0] = 172;
+    parp->targetip[1] = 16;
+    parp->targetip[2] = 70;
+    parp->targetip[3] = 185;
+
+    // 扩展数据
+    memcpy(psend+60, strbuff, sendsize);
+
+#if __WIN32
+    struct sockaddr_in  cliaddr;
+    //bzero(&cliaddr, sizeof(cliaddr));
+    //int index = if_nametoindex ("enp0s3");
+    //printf("iface index %d\n", index);
+    //cliaddr.sll_ifindex = if_nametoindex ("enp0s3");
+    //cliaddr.sll_family = AF_PACKET;
+    //memcpy (cliaddr.sll_addr, srcmac, 6);
+    //cliaddr.sll_halen = htons (6);
+    // 数据发送
+    ret = sendto(sockfd, psend, sendsize+60, 0, (struct sockaddr*)(&cliaddr), sizeof(cliaddr));
+#else
+    struct sockaddr_ll  cliaddr;
+    bzero(&cliaddr, sizeof(cliaddr));
+    int index = if_nametoindex ("enp0s3");
+    printf("iface index %d\n", index);
+    cliaddr.sll_ifindex = if_nametoindex ("enp0s3");
+    //cliaddr.sll_family = AF_PACKET;
+    //memcpy (cliaddr.sll_addr, srcmac, 6);
+    //cliaddr.sll_halen = htons (6);
+    // 数据发送
+    ret = sendto(sockfd, psend, sendsize+60, 0, (struct sockaddr*)(&cliaddr), sizeof(cliaddr));
+#endif
+    if (ret<0) {
+#if __WIN32
+        printf("send raw fail, errno %d\n", WSAGetLastError());
+#else
+        printf("send raw fail, errno %d\n", errno);
+#endif
+        ret = -TCPIPERR_SEND_DATA;
+        goto close_exit;
+    }
+
+    // 等待数据
+    fd_set rfds;
+    struct timeval tv;
+    FD_ZERO(&rfds);
+    FD_SET(sockfd, &rfds);
+    // 设置超时时间
+    tv.tv_sec = 0;
+    tv.tv_usec = 10000;
+
+    // 预计读取数据为超时
+    ret = -TCPIPERR_WAITRECV_TIMEOUT;
+start_select:
+    selret = select(sockfd+1, &rfds, NULL, NULL, &tv);
+    if (-1==selret) {
+        ret = -TCPIPERR_SELECT;
+    } else if (0 == selret) {
+        printf("wait data timeout\n");
+        //ret = -TCPIPERR_WAITRECV_TIMEOUT;
+    } else {
+        // >0,有数据
+        ret = recvfrom(sockfd, strbuff, bufflen, 0, NULL, NULL);
+        if (-1==ret) {
+            ret = -TCPIPERR_RECVMSG;
+            goto close_exit;
+        }
+        // printf("获取消息 %s, ret %d\n", buff, ret);
+
+        if (ret>0 && NULL!=callbk) {
+            callbk(strbuff, ret);
+        }
+        // 标记读取成功,
+        ret = 0;
+        // 重新监听是否有数据返回
+        goto start_select;
+    }
+
+close_exit:
+#if __WIN32
+    closesocket(sockfd);
+    WSACleanup();
+#else
+    close(sockfd);
+#endif
+free_exit:
+    free(psend);
+    psend = NULL;
+    return ret;
+}
+

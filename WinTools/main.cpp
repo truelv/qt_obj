@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <QApplication>
 #include <QTextCodec>
+#include "servers/serversmanager.h"
 
 TASK_ENTRY* task_entry = NULL;
 
@@ -20,5 +21,9 @@ int main(int argc, char *argv[])
         printf("start task core errro, ret %d\n", ret);
     }
     w.show();
+
+    //
+    ServersManager* sm = new ServersManager;
+    sm->StartServer("STftpd");
     return a.exec();
 }

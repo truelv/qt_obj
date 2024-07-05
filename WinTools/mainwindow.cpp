@@ -264,6 +264,7 @@ void MainWindow::on_updateButton_clicked()
 
 void MainWindow::checkboxChange(int state)
 {
+    Q_UNUSED(state)
     QObject* ob = sender();
     int nodeaddr = ob->property("node").toInt();
     DEVICE_INFO_NODE* dinfo = (DEVICE_INFO_NODE*)nodeaddr;

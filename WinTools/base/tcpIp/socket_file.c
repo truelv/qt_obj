@@ -60,7 +60,7 @@ int sock_send_file(int socketfd, const char* file, FILE_STATUS_CBK cb) {
     if (fframe->laseframesize)
         fframe->framecount++;
 
-    printf("size %d, lastsize %d, count %d\n", fframe->filesize, fframe->laseframesize, fframe->framecount);
+    printf("size %ld, lastsize %d, count %d\n", fframe->filesize, fframe->laseframesize, fframe->framecount);
     int sendsize = sizeof(FILE_FRAME);
     int readsize = FRAME_BUFF_SIZE;
     if (1==fframe->framecount)
@@ -374,7 +374,11 @@ static void *waitTcpMsg(void* arg) {
         callArg->len = sizeof(struct sockaddr_in);
         printf("wait client connect\n");
         msgfd = accept(body->socketfd, (struct sockaddr*)&(callArg->srcaddr), &callArg->len);
+#if __WIN32
+        if (INVALID_SOCKET==msgfd) {
+#else
         if (msgfd<0) {
+#endif
             printf("a connect error\n");
             continue ;
         }
@@ -388,6 +392,8 @@ static void *waitTcpMsg(void* arg) {
         close(msgfd);
         printf("callback over, ret %d errno %d\n", ret, errno);
     }
+
+    return NULL;
 }
 
 int tcp_listen_start(RECV_TCP_MSG_BODY** entry, handTcpMsg callback, char* serverip, int port) {

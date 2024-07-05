@@ -1,4 +1,5 @@
 QT       += core gui
+QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +11,7 @@ CONFIG += c++11
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+#QMAKE_LFLAGS += /MANIFESTUAC:\"level=\'requireAdministrator\' uiAccess=\'false\'\"
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -25,7 +27,11 @@ SOURCES += \
     base\tcpIp\raw_socket.c \
     base\dstruct\linkedlist\linkedlist.c \
     base\core\task_core.c \
-    protocol/device_prot.c
+    protocol/device_prot.c \
+    servers/cftp.cpp \
+    servers/sbase.cpp \
+    servers/serversmanager.cpp \
+    servers/stftpd.cpp
 
 HEADERS += \
     item/checkboxinwidget.h \
@@ -38,7 +44,11 @@ HEADERS += \
     base\dstruct\linkedlist\linkedlist.h \
     base\core\task_core.h \
     base\core\task_core_error.h \
-    protocol/device_prot.h
+    protocol/device_prot.h \
+    servers/cftp.h \
+    servers/sbase.h \
+    servers/serversmanager.h \
+    servers/stftpd.h
 
 FORMS += \
     mainwindow.ui
