@@ -22,7 +22,7 @@ int STftpd::ServerStart()
 
 int STftpd::ServerStop()
 {
-
+    _server.close();
 }
 
 void STftpd::SlotNewconnect()
@@ -30,6 +30,7 @@ void STftpd::SlotNewconnect()
     // 对于新的连接，获取socket，然后加入监听
     QTcpSocket* sck = _server.nextPendingConnection();
     qDebug() << "a new ftp connect";
+    // 对于每个客户端的连接，使用一个Cftp表示
     new Cftp(sck);
 }
 

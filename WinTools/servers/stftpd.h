@@ -21,7 +21,7 @@ private:
     // ftp参数
     QString _ip;
     quint16 _port;
-    //
+    // ftp服务，长期存在
     QTcpServer _server;
 };
 #endif // STFTPD_H
