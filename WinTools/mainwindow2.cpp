@@ -1,6 +1,7 @@
 #include "mainwindow2.h"
 #include "ui_mainwindow2.h"
 #include "servers/telnet/telnetsv.h"
+#include <QNetworkInterface>
 
 typedef struct {
     int num;
@@ -63,6 +64,40 @@ MainWindow2::MainWindow2(QWidget *parent) :
     plat_set = 0;
 
     setWindowTitle("一款比较好用的维护工具，点赞打赏哦");
+    const QList<QNetworkInterface>& inface = QNetworkInterface::allInterfaces();
+    foreach(const QNetworkInterface& face, inface)
+    {
+        if (face.type() != QNetworkInterface::Ethernet)
+            continue ;
+
+        if (face.humanReadableName().contains("VMware"))
+            continue;
+
+        if (face.humanReadableName().contains("VirtualBox"))
+            continue;
+
+        if (!face.flags().testFlag(QNetworkInterface::IsUp)
+                || face.flags().testFlag(QNetworkInterface::IsLoopBack))
+            continue;
+
+        qDebug() << face.humanReadableName();
+        const QList<QNetworkAddressEntry>& hostip = face.addressEntries();
+        foreach(const QNetworkAddressEntry& addr, hostip)
+        {
+            if (addr.ip().protocol() != QAbstractSocket::IPv4Protocol)
+                continue;
+            qDebug() << addr.ip().toString();
+            ui->pc_ip->addItem(addr.ip().toString());
+        }
+
+        _pcIP = ui->pc_ip->currentText();
+        qDebug() << "pc ip " <<_pcIP;
+    }
+    //const QNetworkAddressEntry& addr = inface.addressEntries().at(0);
+
+     //qDebug() << addr.ip();
+
+
 }
 
 MainWindow2::~MainWindow2()
@@ -75,6 +110,7 @@ void MainWindow2::ShowUILock(bool lock)
     ui->dev_ip->setEnabled(!lock);
     ui->dev_type->setEnabled(!lock);
     ui->plat_type->setEnabled(!lock);
+    ui->pc_ip->setEnabled(!lock);
 
     const QObjectList& clist = ui->groupBox->children();
     foreach(QObject* obj, clist)
@@ -100,7 +136,7 @@ void MainWindow2::on_get_logs_clicked()
     cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
     cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type);
     cmd.append("&&tar zcvf log.tar.gz log&&");
-    cmd.append("ftpput -uxxx -pxxx ").append("172.16.70.13").append(" log.tar.gz&&");
+    cmd.append("ftpput -uxxx -pxxx ").append(_pcIP).append(" log.tar.gz&&");
     cmd.append("rm log.tar.gz");
 
     _tel->ExeCommond(cmd);
@@ -155,7 +191,7 @@ void MainWindow2::on_get_db_clicked()
     cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
     cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type);
     cmd.append("&&tar zcvf data.tar.gz data&&");
-    cmd.append("ftpput -uxxx -pxxx ").append("172.16.70.13").append(" data.tar.gz&&");
+    cmd.append("ftpput -uxxx -pxxx ").append(_pcIP).append(" data.tar.gz&&");
     cmd.append("rm data.tar.gz");
     _tel->ExeCommond(cmd);
 }
@@ -167,7 +203,7 @@ void MainWindow2::on_get_bin_clicked()
     cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
     cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type);
     cmd.append("&&tar zcvf app.tar.gz app&&");
-    cmd.append("ftpput -uxxx -pxxx ").append("172.16.70.13").append(" app.tar.gz&&");
+    cmd.append("ftpput -uxxx -pxxx ").append(_pcIP).append(" app.tar.gz&&");
     cmd.append("rm app.tar.gz");
     _tel->ExeCommond(cmd);
 }
@@ -175,4 +211,10 @@ void MainWindow2::on_get_bin_clicked()
 void MainWindow2::on_up_app_clicked()
 {
 
+}
+
+void MainWindow2::on_pc_ip_currentTextChanged(const QString &arg1)
+{
+    _pcIP = arg1;
+    qDebug() << "pc switch ip " << _pcIP;
 }

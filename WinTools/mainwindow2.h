@@ -33,6 +33,8 @@ private slots:
 
     void on_up_app_clicked();
 
+    void on_pc_ip_currentTextChanged(const QString &arg1);
+
 private:
     Ui::MainWindow2 *ui;
     TelnetSV* _tel;
@@ -41,6 +43,7 @@ private:
     //
     int dev_set;
     int plat_set;
+    QString _pcIP;
 };
 
 #endif // MAINWINDOW2_H
