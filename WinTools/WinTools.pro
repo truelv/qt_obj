@@ -17,6 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+include(modTelnet/qttelnet.pri)
+
 SOURCES += \
     item/checkboxinwidget.cpp \
     main.cpp \
@@ -27,11 +29,13 @@ SOURCES += \
     base\tcpIp\raw_socket.c \
     base\dstruct\linkedlist\linkedlist.c \
     base\core\task_core.c \
+    mainwindow2.cpp \
     protocol/device_prot.c \
     servers/cftp.cpp \
     servers/sbase.cpp \
     servers/serversmanager.cpp \
-    servers/stftpd.cpp
+    servers/stftpd.cpp \
+    servers/telnet/telnetsv.cpp
 
 HEADERS += \
     item/checkboxinwidget.h \
@@ -44,14 +48,17 @@ HEADERS += \
     base\dstruct\linkedlist\linkedlist.h \
     base\core\task_core.h \
     base\core\task_core_error.h \
+    mainwindow2.h \
     protocol/device_prot.h \
     servers/cftp.h \
     servers/sbase.h \
     servers/serversmanager.h \
-    servers/stftpd.h
+    servers/stftpd.h \
+    servers/telnet/telnetsv.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    mainwindow2.ui
 
 INCLUDEPATH += \
     api protocol base\dstruct
