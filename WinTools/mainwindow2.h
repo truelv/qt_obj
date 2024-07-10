@@ -31,6 +31,8 @@ private slots:
     //
     void SlotShowTelnetMsg(const QString& msg);
 
+    void on_up_app_clicked();
+
 private:
     Ui::MainWindow2 *ui;
     TelnetSV* _tel;
