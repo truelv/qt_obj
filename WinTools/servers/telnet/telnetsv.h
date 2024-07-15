@@ -32,6 +32,9 @@ private:
     bool _logined;
     QtTelnet* _tel;
     //static TelnetSV* _intent;
+    // 计数登录次数
+    int _loginCount;
+    int _passCount;
 };
 
 #endif // TELNETSV_H

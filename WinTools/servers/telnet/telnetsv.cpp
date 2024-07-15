@@ -2,7 +2,7 @@
 
 //TelnetSV* TelnetSV::_intent = NULL;
 TelnetSV::TelnetSV(const QString& ip):
-    _logined(false)
+    _logined(false),_loginCount(0),_passCount(0)
 {
     _tel = new QtTelnet;
     connect(_tel, &QtTelnet::loginRequired, this, &TelnetSV::SLotLoginreq);
@@ -77,9 +77,15 @@ void TelnetSV::SlotRecvMsg(const QString &data)
         _tel->sendData("root\r\n");
         return ;
     }
-    else if (data.contains("Password"))
+
+    if (data.contains("Password"))
     {
-        _tel->sendData("zytk@310012\r\n");
+        if (0==_passCount)
+            _tel->sendData("zytk@310012\r\n");
+        else if (1==_passCount)
+            _tel->sendData("zytk\r\n");
+
+        _passCount ++;
         return ;
     }
 
