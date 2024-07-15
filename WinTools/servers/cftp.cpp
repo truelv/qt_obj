@@ -3,6 +3,10 @@
 #include <QString>
 #include <QHostAddress>
 #include <QFileInfo>
+#include <QCoreApplication>
+
+//#define FTP_ROOT "C:\\Users\\40428\\Desktop\\"
+#define FTP_ROOT "\\file\\"
 
 Cftp::Cftp(QTcpSocket *sck, QObject *parent) : QObject(parent), _sck(sck),
     _logined(false),_dataSock(nullptr),file(nullptr)
@@ -154,7 +158,7 @@ void Cftp::ParseCommond(const QString &cmd)
     } else if ("LIST" == cmdstr) {
     } else if ("RETR" == cmdstr) {
         // 打开文件
-        file = new QFile("C:\\Users\\40428\\Desktop\\"+args);
+        file = new QFile(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
         file->open(QIODevice::ReadWrite);
         // 告诉客户端，数据已经准备好了
         Reply("150 File status okay; about to open data connection.");
@@ -163,7 +167,7 @@ void Cftp::ParseCommond(const QString &cmd)
     } else if ("REST" == cmdstr) {
     } else if ("NLST" == cmdstr) {
     } else if ("SIZE" == cmdstr) {
-        QFileInfo fi("C:\\Users\\40428\\Desktop\\"+args);
+        QFileInfo fi(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
         if (!fi.exists() || fi.isDir()) {
             Reply("550 Requested action not taken; file unavailable.");
             return ;
@@ -183,7 +187,8 @@ void Cftp::ParseCommond(const QString &cmd)
         if (args.contains("/"))
             args = args.split("/").last();
         // 打开文件
-        file = new QFile("C:\\Users\\40428\\Desktop\\"+args);
+        qDebug() << QCoreApplication::applicationDirPath()+FTP_ROOT+args;
+        file = new QFile(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
         file->open(QIODevice::ReadWrite);
         // 回复文件已经准备好了
         Reply("150 File status okay; about to open data connection.");
