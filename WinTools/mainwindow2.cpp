@@ -2,6 +2,8 @@
 #include "ui_mainwindow2.h"
 #include "servers/telnet/telnetsv.h"
 #include <QNetworkInterface>
+#include <QFileDialog>
+#include <QMessageBox>
 
 typedef struct {
     int num;
@@ -18,17 +20,22 @@ typedef struct {
 #define CUM_EOF -1
 
 static DEV_TYPE dev[] = {
-    {1, "YT328", "/data", "dctr"},
-    {2, "YT327L", "/data", "pdctr"},
+    {1, "YT328一体机", "/data", "dctr"},
+    {2, "YT327L一体机", "/data", "pdctr"},
     {3, "YT216", "/home", "spos"},
+    {3, "读卡器", "/data", "reader"},
+    {4, "312控制器", "/home", "smartdc"},
+    {5, "312梯控", "/home", "tk"},
     {CUM_EOF, 0, 0},
 };
 
 static PLAT_TYPE plat[] = {
     {1, "易通", "zyep"},
-    {2, "40", "zytk"},
-    {3, "易通云", "zyetc"},
-    {4, "出入", "zyacs"},
+    {2, "易通（http）", "zyeph"},
+    {3, "40", "zytk"},
+    {4, "易通云", "zyetc"},
+    {5, "易通云（http）", "zyetch"},
+    {6, "出入", "zyacs"},
     {CUM_EOF, 0, 0},
 };
 
@@ -210,7 +217,39 @@ void MainWindow2::on_get_bin_clicked()
 
 void MainWindow2::on_up_app_clicked()
 {
+    QFileDialog fdialog(this);
+    int ret = fdialog.exec();
+    if (QDialog::Rejected==ret)
+        return ;
 
+    const QStringList& filenames = fdialog.selectedFiles();
+    if (filenames.length()<1)
+        return ;
+
+    const QString& filepath = filenames[0];
+    qDebug() << filepath;
+    QFile sfile(filepath);
+    QFileInfo sfinfo(sfile);
+    qDebug() << sfinfo.fileName();
+    if (!sfile.copy(QCoreApplication::applicationDirPath()+"\\file\\"+sfinfo.fileName()))
+    {
+        qDebug() << "copy file faile";
+    }
+
+    // 再次确认文件，确定升级
+    QMessageBox msgbox(this);
+    msgbox.setText("确认下发文件 "+sfinfo.fileName()+" 升级吗？？");
+    ret = msgbox.exec();
+    if (QDialog::Rejected==ret)
+        return ;
+
+    // cd /data/tmp;ftpget -uxxx -pxxx 172.16.70.13 %name%;tar zcvf app.tar.gz app;rm %name%
+    QString cmd;
+    cmd.append("cd ").append(dev[dev_set].rootdir).append("&&");
+    cmd.append("ftpget -uxxx -pxxx ").append(_pcIP).append(" "+sfinfo.fileName());
+    cmd.append("&&tar xvf ").append(sfinfo.fileName());
+    cmd.append("&&rm ").append(sfinfo.fileName());
+    _tel->ExeCommond(cmd);
 }
 
 void MainWindow2::on_pc_ip_currentTextChanged(const QString &arg1)
