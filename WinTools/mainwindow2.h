@@ -30,10 +30,9 @@ private slots:
     void on_get_logs_clicked();
     //
     void SlotShowTelnetMsg(const QString& msg);
-
     void on_up_app_clicked();
-
     void on_pc_ip_currentTextChanged(const QString &arg1);
+    void on_dev_switch_clicked();
 
 private:
     Ui::MainWindow2 *ui;

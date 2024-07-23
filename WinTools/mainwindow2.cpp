@@ -1,25 +1,13 @@
 #include "mainwindow2.h"
 #include "ui_mainwindow2.h"
 #include "servers/telnet/telnetsv.h"
+#include "ui_defind.h"
 #include <QNetworkInterface>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "devselect.h"
 
-typedef struct {
-    int num;
-    char* name;
-    char* dir;
-} PLAT_TYPE;
-
-typedef struct {
-    int num;
-    char* name;
-    char* rootdir;
-    char* type;
-} DEV_TYPE;
-#define CUM_EOF -1
-
-static DEV_TYPE dev[] = {
+DEV_TYPE dev[] = {
     {1, "YT328一体机", "/data", "dctr"},
     {2, "YT327L一体机", "/data", "pdctr"},
     {3, "YT216", "/home", "spos"},
@@ -29,7 +17,7 @@ static DEV_TYPE dev[] = {
     {CUM_EOF, 0, 0},
 };
 
-static PLAT_TYPE plat[] = {
+PLAT_TYPE plat[] = {
     {1, "易通", "zyep"},
     {2, "易通（http）", "zyeph"},
     {3, "40", "zytk"},
@@ -256,4 +244,26 @@ void MainWindow2::on_pc_ip_currentTextChanged(const QString &arg1)
 {
     _pcIP = arg1;
     qDebug() << "pc switch ip " << _pcIP;
+}
+
+/*
+327L 易通云
+[DeviceProType]
+DeviceName=YT328
+Tpye=zyetc_pdctr
+*/
+void MainWindow2::on_dev_switch_clicked()
+{
+    DevSelect* devs = new DevSelect(this, &plat_set, &dev_set);
+    int ret = devs->exec();
+    if (QDialog::Rejected==ret)
+        return;
+
+    // cd /data/etc&&echo "[DeviceProType]\nDeviceName=YT328\nTpye=zyetc_pdctr\n" > DeviceProType.ini
+    QString cmd;
+    cmd.append("cd ").append(dev[dev_set].rootdir).append("/etc&&");
+    cmd.append("echo [DeviceProType]>DeviceProType.ini&&");
+    cmd.append("echo DeviceName=").append("YT328").append(">>DeviceProType.ini&&");
+    cmd.append("echo Tpye=").append(plat[plat_set].dir).append("_").append(dev[dev_set].type).append(">>DeviceProType.ini");
+    _tel->ExeCommond(cmd);
 }

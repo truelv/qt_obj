@@ -155,7 +155,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="dev_factory_2">
+              <widget class="QPushButton" name="dev_switch">
                <property name="text">
                 <string>切换程序启动</string>
                </property>
