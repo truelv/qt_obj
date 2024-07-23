@@ -20,6 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(modTelnet/qttelnet.pri)
 
 SOURCES += \
+    devselect.cpp \
     item/checkboxinwidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -38,6 +39,7 @@ SOURCES += \
     servers/telnet/telnetsv.cpp
 
 HEADERS += \
+    devselect.h \
     item/checkboxinwidget.h \
     mainwindow.h \
     api\deviceInfo.h \
@@ -57,6 +59,7 @@ HEADERS += \
     servers/telnet/telnetsv.h
 
 FORMS += \
+    devselect.ui \
     mainwindow.ui \
     mainwindow2.ui
 
