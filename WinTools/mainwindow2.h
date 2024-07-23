@@ -30,11 +30,21 @@ private slots:
     void on_get_logs_clicked();
     //
     void SlotShowTelnetMsg(const QString& msg);
+    void SlotTelnetLost();
     void on_up_app_clicked();
     void on_pc_ip_currentTextChanged(const QString &arg1);
     void on_dev_switch_clicked();
+    // 列表命令
+    void on_do_cmd_clicked();
+    void on_cmd_list_editTextChanged(const QString &arg1);
+    void on_cmd_list_currentIndexChanged(int index);
 
 private:
+    static void Do_upapp(QObject *itent, const QString& filename);
+    static void Do_copybin(QObject *itent, const QString& filename);
+    //
+    void SelectFile(QObject *itent, void(*do_some)(QObject *itent, const QString&));
+    //
     Ui::MainWindow2 *ui;
     TelnetSV* _tel;
     //
@@ -43,6 +53,8 @@ private:
     int dev_set;
     int plat_set;
     QString _pcIP;
+    //
+    int clist_set;
 };
 
 #endif // MAINWINDOW2_H

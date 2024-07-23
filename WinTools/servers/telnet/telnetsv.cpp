@@ -67,6 +67,7 @@ void TelnetSV::SLotLogout()
 void TelnetSV::SlotConnectErr(QAbstractSocket::SocketError error)
 {
     qDebug() << "SlotConnectErr";
+    emit Logout();
 }
 
 void TelnetSV::SlotRecvMsg(const QString &data)

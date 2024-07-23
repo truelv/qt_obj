@@ -19,6 +19,7 @@ public:
 
 signals:
     void RelyMsg(const QString& msg);
+    void Logout();
 
 protected slots:
     void SLotLoginreq();
