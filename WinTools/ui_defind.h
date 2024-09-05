@@ -21,6 +21,9 @@ typedef enum {
     LT_VIEW_ROUTE,
     LT_VIEW_IP,
     LT_VIEW_DNS,
+    LT_REPLACE_ISPCONF,
+    LT_KERNEL_UP,
+    LT_KERNEL_VER,
 } LIST_TYPE;
 
 typedef struct {
