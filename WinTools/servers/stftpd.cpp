@@ -17,7 +17,12 @@ STftpd::~STftpd()
 
 int STftpd::ServerStart()
 {
-    _server.listen(QHostAddress::AnyIPv4, _port);
+    if (_server.listen(QHostAddress::AnyIPv4, _port))
+    {
+        return 0;
+    }
+
+    return -1;
 }
 
 int STftpd::ServerStop()
