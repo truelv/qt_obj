@@ -25,6 +25,8 @@ DevSelect::DevSelect(QWidget *parent, int* plat_set, int* dev_set) :
     {
         if (CUM_EOF==plat[i].num)
             break;
+        if (!(plat[i].supflag&dev[*dev_set].devflag))
+            continue ;
         ui->plat_set->addItem(plat[i].name);
     }
 

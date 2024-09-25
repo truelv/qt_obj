@@ -7,25 +7,32 @@
 #include <QMessageBox>
 #include "devselect.h"
 
+#define SUP_DEV_DCTR_YT328      0x01
+#define SUP_DEV_DCTR_YT327L     0x02
+#define SUP_DEV_YT216           0x04
+#define SUP_DEV_READER_YT328    0x08
+#define SUP_DEV_CONTRL_YT312    0x10
+#define SUP_DEV_TK_YT312    0x20
+
 DEV_TYPE dev[] = {
     // index,设备名字，根目录，设备类型后缀
-    {1, "328一体机", "/data", "dctr"},
-    {2, "327L一体机", "/data", "pdctr"},
-    {3, "216", "/home", "spos"},
-    {4, "328读卡器", "/data", "reader"},
-    {5, "312控制器", "/home", "smartdc"},
-    {6, "312梯控", "/home", "tk"},
+    {1, "328一体机", "/data", "dctr", SUP_DEV_DCTR_YT328},
+    {2, "327L一体机", "/data", "pdctr", SUP_DEV_DCTR_YT327L},
+    {3, "216", "/home", "spos", SUP_DEV_YT216},
+    {4, "328读卡器", "/data", "reader", SUP_DEV_READER_YT328},
+    {5, "312控制器", "/home", "smartdc", SUP_DEV_CONTRL_YT312},
+    {6, "312梯控", "/home", "tk", SUP_DEV_TK_YT312},
     {CUM_EOF, 0, 0, 0},
 };
 
 PLAT_TYPE plat[] = {
     // index，平台名字，平台类型前缀
-    {1, "易通", "zyep"},
-    {2, "易通（http）", "zyeph"},
-    {3, "40", "zytk"},
-    {4, "易通云", "zyetc"},
-    {5, "易通云（http）", "zyetch"},
-    {6, "出入", "zyacs"},
+    {1, "易通", "zyep", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312},
+    {2, "易通（http）", "zyeph", SUP_DEV_CONTRL_YT312},
+    {3, "40", "zytk", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_READER_YT328},
+    {4, "易通云", "zyetc", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L},
+    {5, "易通云（http）", "zyetch", 0},
+    {6, "出入", "zyacs", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312|SUP_DEV_TK_YT312},
     {CUM_EOF, 0, 0},
 };
 
@@ -55,6 +62,9 @@ MainWindow2::MainWindow2(QWidget *parent) :
 
     ui->dev_ip->setText("172.16.70.185");
 
+    dev_set = 0;
+    plat_set = 0;
+
     for (int i=0;;i++)
     {
         if (CUM_EOF==dev[i].num)
@@ -62,12 +72,16 @@ MainWindow2::MainWindow2(QWidget *parent) :
         ui->dev_type->addItem(dev[i].name);
     }
 
+#if 0
     for (int i=0;;i++)
     {
         if (CUM_EOF==plat[i].num)
             break;
+        if (!(plat[i].supflag&dev[dev_set].devflag))
+            continue ;
         ui->plat_type->addItem(plat[i].name);
     }
+#endif
 
     for (int i=0;;i++)
     {
@@ -79,8 +93,7 @@ MainWindow2::MainWindow2(QWidget *parent) :
 
     ui->splitter->setStretchFactor(0,3);
     ui->splitter->setStretchFactor(1,7);
-    dev_set = 0;
-    plat_set = 0;
+
     clist_set = 0;
 
     setWindowTitle("一款比较好用的维护工具，点赞打赏哦");
@@ -230,8 +243,19 @@ void MainWindow2::on_lock_info_clicked()
 
 void MainWindow2::on_dev_type_currentIndexChanged(int index)
 {
-    qDebug() << "dev " << dev[index].name;
+    qDebug() << "dev " << dev[index].name << __LINE__;
     dev_set = index;
+
+    ui->plat_type->clear();
+    // 修改平台类型，联动
+    for (int i=0;;i++)
+    {
+        if (CUM_EOF==plat[i].num)
+            break;
+        if (!(plat[i].supflag&dev[dev_set].devflag))
+            continue ;
+        ui->plat_type->addItem(plat[i].name);
+    }
 }
 
 void MainWindow2::on_plat_type_currentIndexChanged(int index)
@@ -261,12 +285,29 @@ void MainWindow2::on_get_bin_clicked()
 {
     // cd /data/zyep_pdctr;tar zcvf app.tar.gz app;ftpput -uxxx -pxxx 172.16.70.13 app.tar.gz;rm app.tar.gz
     QString cmd;
+#if 1
     cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
     cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type);
     cmd.append("&&tar zcvf app.tar.gz app&&");
     cmd.append("ftpput -uxxx -pxxx ").append(_pcIP).append(" app.tar.gz&&");
     cmd.append("rm app.tar.gz");
     _tel->ExeCommond(cmd);
+#else
+#if 0
+    cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
+    cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type);
+    cmd.append("&&tar zcvf app.tar.gz app&&");
+    cmd.append("ftpput -uxxx -pxxx ").append(_pcIP).append(" app.tar.gz&&");
+    cmd.append("rm app.tar.gz");
+#else
+    cmd.append("ls /data");
+#endif
+    QString recv;
+    recv.clear();
+    _tel->ExeCommondWait(cmd, &recv, 1000);
+    //_tel->ExeCommond(cmd);
+    qDebug() << "<== " << recv;
+#endif
 }
 
 void MainWindow2::on_up_app_clicked()

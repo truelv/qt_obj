@@ -5,6 +5,7 @@ typedef struct {
     int num;
     const char* name;
     const char* dir;
+    int supflag;    // 支持设备标记
 } PLAT_TYPE;
 
 typedef struct {
@@ -12,6 +13,7 @@ typedef struct {
     const char* name;
     const char* rootdir;
     const char* type;
+    int devflag;
 } DEV_TYPE;
 
 //
