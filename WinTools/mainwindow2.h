@@ -61,6 +61,7 @@ private:
     //
     int dev_set;
     int plat_set;
+    int plat_select;
     QString _pcIP;
     //
     int clist_set;

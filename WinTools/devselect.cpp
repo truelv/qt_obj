@@ -1,12 +1,13 @@
 #include "devselect.h"
 #include "ui_devselect.h"
 #include "ui_defind.h"
+#include <QtDebug>
 
 extern DEV_TYPE dev[];
 extern PLAT_TYPE plat[];
+extern int map_index[];
 
-
-DevSelect::DevSelect(QWidget *parent, int* plat_set, int* dev_set) :
+DevSelect::DevSelect(QWidget *parent, int* plat_select, int* plat_set, int* dev_set) :
     QDialog(parent),
     ui(new Ui::DevSelect),
     _dev_set(dev_set),
@@ -30,12 +31,13 @@ DevSelect::DevSelect(QWidget *parent, int* plat_set, int* dev_set) :
         ui->plat_set->addItem(plat[i].name);
     }
 
-    if (nullptr!=plat_set)
-        ui->plat_set->setCurrentIndex(*plat_set);
+    if (nullptr!=plat_select)
+        ui->plat_set->setCurrentIndex(*plat_select);
     if (nullptr!=dev_set)
         ui->dev_set->setCurrentIndex(*dev_set);
 
     ui->dev_set->setEnabled(false);
+    qDebug() << "plat " << plat[*_plat_set].name << __LINE__;
 }
 
 DevSelect::~DevSelect()
@@ -45,7 +47,8 @@ DevSelect::~DevSelect()
 
 void DevSelect::on_plat_set_currentIndexChanged(int index)
 {
-    _tmp_plat = index;
+    _tmp_plat = map_index[index];
+    qDebug() << "plat " << plat[_tmp_plat].name << __LINE__;
 }
 
 void DevSelect::on_dev_set_currentIndexChanged(int index)

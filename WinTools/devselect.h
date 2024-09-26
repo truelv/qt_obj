@@ -12,7 +12,7 @@ class DevSelect : public QDialog
     Q_OBJECT
 
 public:
-    explicit DevSelect(QWidget *parent = nullptr, int *plat_se = nullptr, int *dev_set=nullptr);
+    explicit DevSelect(QWidget *parent = nullptr, int *plat_select = nullptr, int *plat_set=nullptr, int *dev_set=nullptr);
     ~DevSelect();
 
 private slots:

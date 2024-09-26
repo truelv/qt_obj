@@ -35,6 +35,7 @@ PLAT_TYPE plat[] = {
     {6, "出入", "zyacs", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312|SUP_DEV_TK_YT312},
     {CUM_EOF, 0, 0},
 };
+int map_index[] = {0,1,2,3,4,5};
 
 static CMD_LIST clist[] = {
     // 序号，名称，命令标记
@@ -64,6 +65,7 @@ MainWindow2::MainWindow2(QWidget *parent) :
 
     dev_set = 0;
     plat_set = 0;
+    plat_select = 0;
 
     for (int i=0;;i++)
     {
@@ -248,20 +250,26 @@ void MainWindow2::on_dev_type_currentIndexChanged(int index)
 
     ui->plat_type->clear();
     // 修改平台类型，联动
-    for (int i=0;;i++)
+    for (int i=0,j=0;;i++)
     {
         if (CUM_EOF==plat[i].num)
             break;
         if (!(plat[i].supflag&dev[dev_set].devflag))
             continue ;
         ui->plat_type->addItem(plat[i].name);
+        map_index[j++] = i;
     }
+    // 选择的是第0个选项
+    plat_set = map_index[0];
+    plat_select = 0;
+    qDebug() << "plat " << plat[plat_set].name << __LINE__;
 }
 
 void MainWindow2::on_plat_type_currentIndexChanged(int index)
 {
-    qDebug() << "plat " << plat[index].name;
-    plat_set = index;
+    plat_select = index;
+    plat_set = map_index[index];
+    qDebug() << "plat " << plat[plat_set].name << __LINE__;
 }
 
 void MainWindow2::on_dev_reboot_clicked()
@@ -329,7 +337,7 @@ Tpye=zyetc_pdctr
 */
 void MainWindow2::on_dev_switch_clicked()
 {
-    DevSelect* devs = new DevSelect(this, &plat_set, &dev_set);
+    DevSelect* devs = new DevSelect(this, &plat_select, &plat_set, &dev_set);
     int ret = devs->exec();
     if (QDialog::Rejected==ret)
         return;
