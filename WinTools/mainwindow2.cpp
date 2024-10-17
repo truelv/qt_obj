@@ -539,3 +539,21 @@ void MainWindow2::on_pre_ip_clicked()
 {
     reConnectIp(false);
 }
+
+void MainWindow2::on_bt_clear_clicked()
+{
+    ui->show_msg->clear();
+}
+
+void MainWindow2::on_dev_factory_clicked()
+{
+    // /data/etc/DeviceProType.ini
+    QString cmd;
+    cmd.append("rm ").append(dev[dev_set].rootdir).append("/etc/DeviceProType.ini");
+    _tel->ExeCommond(cmd);
+}
+
+void MainWindow2::on_dev_init_clicked()
+{
+
+}
