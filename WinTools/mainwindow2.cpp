@@ -7,34 +7,28 @@
 #include <QMessageBox>
 #include "devselect.h"
 
-#define SUP_DEV_DCTR_YT328      0x01
-#define SUP_DEV_DCTR_YT327L     0x02
-#define SUP_DEV_YT216           0x04
-#define SUP_DEV_READER_YT328    0x08
-#define SUP_DEV_CONTRL_YT312    0x10
-#define SUP_DEV_TK_YT312    0x20
-
 DEV_TYPE dev[] = {
-    // index,设备名字，根目录，设备类型后缀
+    // index,设备名字，根目录，设备类型后缀，设备类型标记
     {1, "328一体机", "/data", "dctr", SUP_DEV_DCTR_YT328},
     {2, "327L一体机", "/data", "pdctr", SUP_DEV_DCTR_YT327L},
     {3, "216", "/home", "spos", SUP_DEV_YT216},
     {4, "328读卡器", "/data", "reader", SUP_DEV_READER_YT328},
     {5, "312控制器", "/home", "smartdc", SUP_DEV_CONTRL_YT312},
     {6, "312梯控", "/home", "tk", SUP_DEV_TK_YT312},
-    {CUM_EOF, 0, 0, 0},
+    {CUM_EOF, 0, 0, 0, 0},
 };
 
 PLAT_TYPE plat[] = {
-    // index，平台名字，平台类型前缀
-    {1, "易通", "zyep", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312},
-    {2, "易通（http）", "zyeph", SUP_DEV_CONTRL_YT312},
-    {3, "40", "zytk", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_READER_YT328},
-    {4, "易通云", "zyetc", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L},
-    {5, "易通云（http）", "zyetch", 0},
-    {6, "出入", "zyacs", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312|SUP_DEV_TK_YT312},
-    {CUM_EOF, 0, 0},
+    // index，平台名字，平台类型前缀，平台支持设备类型标记
+    {1, "易通", "zyep", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312, SUP_PLAT_YT},
+    {2, "易通（http）", "zyeph", SUP_DEV_CONTRL_YT312, SUP_PLAT_YTH},
+    {3, "40", "zytk", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_READER_YT328, SUP_PLAT_40},
+    {4, "易通云", "zyetc", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L, SUP_PLAT_ETC},
+    {5, "易通云（http）", "zyetch", 0, SUP_PLAT_ETC},
+    {6, "出入", "zyacs", SUP_DEV_DCTR_YT328|SUP_DEV_DCTR_YT327L|SUP_DEV_CONTRL_YT312|SUP_DEV_TK_YT312, SUP_PLAT_ACS},
+    {CUM_EOF, 0, 0, 0, 0},
 };
+// 设备支持的平台，会映射到这里
 int map_index[] = {0,1,2,3,4,5};
 
 static CMD_LIST clist[] = {
@@ -49,7 +43,7 @@ static CMD_LIST clist[] = {
     {8, "替换ISP配置文件", LT_REPLACE_ISPCONF},
     {9, "升级内核", LT_KERNEL_UP},
     {10, "查看内核版本", LT_KERNEL_VER},
-    {CUM_EOF, 0},
+    {CUM_EOF, 0,LT_NONE},
 };
 
 MainWindow2::MainWindow2(QWidget *parent) :
@@ -339,6 +333,7 @@ void MainWindow2::on_dev_switch_clicked()
 {
     DevSelect* devs = new DevSelect(this, &plat_select, &plat_set, &dev_set);
     int ret = devs->exec();
+    delete devs;
     if (QDialog::Rejected==ret)
         return;
 
@@ -556,4 +551,46 @@ void MainWindow2::on_dev_factory_clicked()
 void MainWindow2::on_dev_init_clicked()
 {
 
+}
+
+#include "viewdb.h"
+void MainWindow2::on_facelist_clicked()
+{
+    const char* dbname = NULL;
+    // 获取数据库文件名称
+    switch (dev[dev_set].devflag) {
+    case SUP_DEV_DCTR_YT328:
+    case SUP_DEV_DCTR_YT327L:
+        dbname = "auth.db";
+        break;
+    case SUP_DEV_YT216:
+        return ;
+        break;
+    case SUP_DEV_READER_YT328:
+        dbname = "setting.db";
+        break;
+    case SUP_DEV_CONTRL_YT312:
+    case SUP_DEV_TK_YT312:
+        dbname = "SQL.db";
+        break;
+    default:
+        qDebug() << "dev type error";
+        return ;
+        break;
+    }
+
+#if 0
+    // 获取数据库到指定目录，
+    // cd /data/zyep_pdctr/data;ftpput -uxxx -pxxx 172.16.70.13 auth.db
+    QString cmd;
+    cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
+    cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type).append("/data");
+    cmd.append("&&ftpput -uxxx -pxxx ").append(_pcIP).append(" ").append(dbname);
+    _tel->ExeCommond(cmd);
+#endif
+    // 判断是否有文件
+
+    // 创建新窗口，解析数据库，人脸下发情况体现
+    ViewDb* dbv = new ViewDb(this, dbname, dev[dev_set].devflag|plat[plat_set].platfalg);
+    dbv->exec();
 }

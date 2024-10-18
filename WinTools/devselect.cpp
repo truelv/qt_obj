@@ -42,6 +42,7 @@ DevSelect::DevSelect(QWidget *parent, int* plat_select, int* plat_set, int* dev_
 
 DevSelect::~DevSelect()
 {
+    qDebug() << "release DevSelect";
     delete ui;
 }
 

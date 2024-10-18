@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -36,7 +36,8 @@ SOURCES += \
     servers/sbase.cpp \
     servers/serversmanager.cpp \
     servers/stftpd.cpp \
-    servers/telnet/telnetsv.cpp
+    servers/telnet/telnetsv.cpp \
+    viewdb.cpp
 
 HEADERS += \
     devselect.h \
@@ -56,12 +57,14 @@ HEADERS += \
     servers/sbase.h \
     servers/serversmanager.h \
     servers/stftpd.h \
-    servers/telnet/telnetsv.h
+    servers/telnet/telnetsv.h \
+    viewdb.h
 
 FORMS += \
     devselect.ui \
     mainwindow.ui \
-    mainwindow2.ui
+    mainwindow2.ui \
+    viewdb.ui
 
 INCLUDEPATH += \
     api protocol base\dstruct

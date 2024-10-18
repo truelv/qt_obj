@@ -44,10 +44,9 @@ private slots:
     void on_pre_ip_clicked();
 
     void on_bt_clear_clicked();
-
     void on_dev_factory_clicked();
-
     void on_dev_init_clicked();
+    void on_facelist_clicked();
 
 private:
     static void Do_upapp(QObject *itent, const QString& filename);
