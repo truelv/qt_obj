@@ -132,10 +132,12 @@ MainWindow2::MainWindow2(QWidget *parent) :
 
     // 监听sftp
     connect(GlobalSignal::GetInstance(), SIGNAL(SigSftpSta(SFTP_STA)), this, SLOT(SlotSftpSta(SFTP_STA)));
+    connect(&waitFtpEnd, SIGNAL(timeout()), this, SLOT(SlotWaitFtpEnd()));
 }
 
 MainWindow2::~MainWindow2()
 {
+    disconnect(&waitFtpEnd, SIGNAL(timeout()), this, SLOT(SlotWaitFtpEnd()));
     disconnect(GlobalSignal::GetInstance(), SIGNAL(SigSftpSta(SFTP_STA)), this, SLOT(SlotSftpSta(SFTP_STA)));
     delete ui;
 }
@@ -595,6 +597,9 @@ void MainWindow2::on_facelist_clicked()
     cmd.append("&&ftpput -uxxx -pxxx ").append(_pcIP).append(" ").append(_dbname);
     _tel->ExeCommond(cmd);
 #endif
+    // 等待5s
+    waitFtpEnd.start(5000);
+    //QMessageBox::information(this, tr("提示"), tr("正在获取数据文件"));
 }
 
 void MainWindow2::SlotSftpSta(SFTP_STA sta)
@@ -612,12 +617,27 @@ void MainWindow2::SlotSftpSta(SFTP_STA sta)
 
 void MainWindow2::SlotCftpEnd()
 {
+    if (waitFtpEnd.isActive())
+        waitFtpEnd.stop();
+
     qDebug() << "manwindow2 get cftp end";
     // 只监听一次
     disconnect(GlobalSignal::GetInstance(), SIGNAL(SigCftpEnd()), this, SLOT(SlotCftpEnd()));
     // 判断是否有文件
+    QFile f(QCoreApplication::applicationDirPath()+"\\file\\"+_dbname);
+    if (!f.exists())
+    {
+        QMessageBox::warning(this, tr("错误"), tr("没有获取到数据库文件"));
+        return ;
+    }
 
     // 创建新窗口，解析数据库，人脸下发情况体现
     ViewDb* dbv = new ViewDb(this, _dbname, dev[dev_set].devflag|plat[plat_set].platfalg);
     dbv->exec();
+}
+
+void MainWindow2::SlotWaitFtpEnd()
+{
+    QMessageBox::warning(this, tr("错误"), tr("没有获取到数据库文件"));
+    waitFtpEnd.stop();
 }

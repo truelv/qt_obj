@@ -5,6 +5,7 @@
 #include <QSqlQueryModel>
 #include "ui_defind.h"
 #include <QMessageBox>
+#include <QFile>
 
 #define VDB_EOF -1
 
@@ -48,7 +49,7 @@ typedef struct {
 } TB_CHECK_LIST;
 
 ViewDb::ViewDb(QWidget *parent, const QString &dbname, int devtyp) :
-    QDialog(parent),
+    QDialog(parent),dbflie(dbname),
     ui(new Ui::ViewDb)
 {
     ui->setupUi(this);
@@ -86,7 +87,7 @@ ViewDb::ViewDb(QWidget *parent, const QString &dbname, int devtyp) :
     // 打开数据库
     qDebug() << "open db";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName(QCoreApplication::applicationDirPath()+"\\file\\"+dbname);
+    m_db.setDatabaseName(QCoreApplication::applicationDirPath()+"\\file\\"+dbflie);
     if (!m_db.open())
     {
         qDebug() << "open db error";
@@ -105,6 +106,12 @@ ViewDb::~ViewDb()
 
     if (m_db.isOpen())
         m_db.close();
+
+    // 删除db文件
+    QFile f(QCoreApplication::applicationDirPath()+"\\file\\"+dbflie);
+    if (f.exists())
+        f.remove();
+
     delete ui;
 }
 

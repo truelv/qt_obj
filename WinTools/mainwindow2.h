@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "servers/telnet/telnetsv.h"
 #include "globalsignal.h"
+#include <QTimer>
 
 namespace Ui {
 class MainWindow2;
@@ -53,6 +54,8 @@ private slots:
     // 监听服务状态
     void SlotSftpSta(SFTP_STA sta);
     void SlotCftpEnd();
+    // 监听ftp超时
+    void SlotWaitFtpEnd();
 
 private:
     static void Do_upapp(QObject *itent, const QString& filename);
@@ -78,6 +81,7 @@ private:
     int clist_set;
     // 如果需要等待文件ftp传输结束，这里登记一下信息
     char* _dbname;
+    QTimer waitFtpEnd;
 };
 
 #endif // MAINWINDOW2_H

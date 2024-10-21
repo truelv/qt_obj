@@ -43,6 +43,7 @@ private:
     int condition_select;
 
     // db
+    QString dbflie;
     QSqlDatabase m_db;
     QSqlQueryModel* m_model;
 };
