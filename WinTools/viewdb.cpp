@@ -151,6 +151,8 @@ void ViewDb::InitSql(int devtype, int dev)
     case SUP_DEV_READER_YT328:
         stbs[4].sql = "select * from LocalInfo";
         break;
+    case SUP_DEV_CONTRL_YT312:
+    case SUP_DEV_TK_YT312:
     default:
         break;
     }

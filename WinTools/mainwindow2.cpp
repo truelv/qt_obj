@@ -638,6 +638,7 @@ void MainWindow2::SlotCftpEnd()
 
 void MainWindow2::SlotWaitFtpEnd()
 {
-    QMessageBox::warning(this, tr("错误"), tr("没有获取到数据库文件"));
+    disconnect(GlobalSignal::GetInstance(), SIGNAL(SigCftpEnd()), this, SLOT(SlotCftpEnd()));
     waitFtpEnd.stop();
+    QMessageBox::warning(this, tr("错误"), tr("没有获取到数据库文件"));
 }
