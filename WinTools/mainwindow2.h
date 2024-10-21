@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "servers/telnet/telnetsv.h"
+#include "globalsignal.h"
 
 namespace Ui {
 class MainWindow2;
@@ -22,24 +23,25 @@ private slots:
     void on_lock_info_clicked();
     void on_dev_type_currentIndexChanged(int index);
     void on_plat_type_currentIndexChanged(int index);
+    // 监听telnet状态
+    void SlotShowTelnetMsg(const QString& msg);
+    void SlotTelnetLost();
+    /** 用户操作 */
     //
     void on_dev_reboot_clicked();
     //
     void on_get_db_clicked();
     void on_get_bin_clicked();
     void on_get_logs_clicked();
-    //
-    void SlotShowTelnetMsg(const QString& msg);
-    void SlotTelnetLost();
-    //
+    // 用户操作
     void on_up_app_clicked();
     void on_pc_ip_currentTextChanged(const QString &arg1);
     void on_dev_switch_clicked();
-    // 列表命令
+    // 列表命令，用户操作
     void on_do_cmd_clicked();
     void on_cmd_list_editTextChanged(const QString &arg1);
     void on_cmd_list_currentIndexChanged(int index);
-
+    // 用户操作
     void on_next_ip_clicked();
     void on_pre_ip_clicked();
 
@@ -47,6 +49,10 @@ private slots:
     void on_dev_factory_clicked();
     void on_dev_init_clicked();
     void on_facelist_clicked();
+
+    // 监听服务状态
+    void SlotSftpSta(SFTP_STA sta);
+    void SlotCftpEnd();
 
 private:
     static void Do_upapp(QObject *itent, const QString& filename);
@@ -70,6 +76,8 @@ private:
     QString _pcIP;
     //
     int clist_set;
+    // 如果需要等待文件ftp传输结束，这里登记一下信息
+    char* _dbname;
 };
 
 #endif // MAINWINDOW2_H

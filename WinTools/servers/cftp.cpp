@@ -4,12 +4,13 @@
 #include <QHostAddress>
 #include <QFileInfo>
 #include <QCoreApplication>
+#include "stftpd.h"
 
 //#define FTP_ROOT "C:\\Users\\40428\\Desktop\\"
 #define FTP_ROOT "\\file\\"
 
-Cftp::Cftp(QTcpSocket *sck, QObject *parent) : QObject(parent), _sck(sck),
-    _logined(false),_dataSock(nullptr),file(nullptr)
+Cftp::Cftp(QTcpSocket *sck, QObject *sftp, QObject *parent) : QObject(parent), _sck(sck),
+    _logined(false),_dataSock(nullptr),file(nullptr),_sftp(sftp)
 {
     // 客户端连接建立后，监听连接状态和命令
     connect(_sck, SIGNAL(disconnected()), this, SLOT(SlotConnectlost()));
@@ -55,6 +56,8 @@ void Cftp::Reply(const QString &replyCode)
 void Cftp::SlotConnectlost()
 {
     qDebug() << "ftp disconnect";
+    if (nullptr!=_sftp)
+        qobject_cast<STftpd*>(_sftp)->CFtpDisConnect();
     deleteLater();
 }
 
@@ -70,7 +73,6 @@ void Cftp::SlotReadready()
 
 void Cftp::SlotDataConnect()
 {
-    qDebug() << "1233";
     _dataSock = _dataServer->nextPendingConnection();
     _dataServer->close();
 
@@ -139,6 +141,10 @@ void Cftp::ParseCommond(const QString &cmd)
 
     if ("QUIT" == cmdstr) {
         Reply("221 Quitting...");
+#if 0
+        if (nullptr!=_sftp)
+            qobject_cast<STftpd*>(_sftp)->CFtpQuit();
+#endif
     } else if ("AUTH" == cmdstr && "TLS" == args.toUpper()) {
         //auth();
     } else if ("FEAT" == cmdstr) {

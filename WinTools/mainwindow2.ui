@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>804</width>
-    <height>689</height>
+    <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,7 +218,7 @@
         <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;ver 24.10.17.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;ver 24.10.21.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -329,6 +329,13 @@
     </item>
     <item>
      <widget class="QLabel" name="stat_msg">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="sftp_msg">
       <property name="text">
        <string/>
       </property>

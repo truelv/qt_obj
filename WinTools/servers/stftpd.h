@@ -14,6 +14,10 @@ public:
     int ServerStart() override;
     int ServerStop() override;
 
+    // 客户端退出回调
+    int CFtpQuit();
+    int CFtpDisConnect();
+
 protected slots:
     void SlotNewconnect();
 

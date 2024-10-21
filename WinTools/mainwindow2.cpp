@@ -129,10 +129,14 @@ MainWindow2::MainWindow2(QWidget *parent) :
      //qDebug() << addr.ip();
     ui->stat_msg->setStyleSheet("color:red;font-size:23px;");
     //ui->stat_msg->setText(QString::fromUtf8("显示状态"));
+
+    // 监听sftp
+    connect(GlobalSignal::GetInstance(), SIGNAL(SigSftpSta(SFTP_STA)), this, SLOT(SlotSftpSta(SFTP_STA)));
 }
 
 MainWindow2::~MainWindow2()
 {
+    disconnect(GlobalSignal::GetInstance(), SIGNAL(SigSftpSta(SFTP_STA)), this, SLOT(SlotSftpSta(SFTP_STA)));
     delete ui;
 }
 
@@ -556,22 +560,21 @@ void MainWindow2::on_dev_init_clicked()
 #include "viewdb.h"
 void MainWindow2::on_facelist_clicked()
 {
-    const char* dbname = NULL;
     // 获取数据库文件名称
     switch (dev[dev_set].devflag) {
     case SUP_DEV_DCTR_YT328:
     case SUP_DEV_DCTR_YT327L:
-        dbname = "auth.db";
+        _dbname = "auth.db";
         break;
     case SUP_DEV_YT216:
         return ;
         break;
     case SUP_DEV_READER_YT328:
-        dbname = "setting.db";
+        _dbname = "setting.db";
         break;
     case SUP_DEV_CONTRL_YT312:
     case SUP_DEV_TK_YT312:
-        dbname = "SQL.db";
+        _dbname = "SQL.db";
         break;
     default:
         qDebug() << "dev type error";
@@ -579,18 +582,42 @@ void MainWindow2::on_facelist_clicked()
         break;
     }
 
-#if 0
+#if 1
+    connect(GlobalSignal::GetInstance(), SIGNAL(SigCftpEnd()), this, SLOT(SlotCftpEnd()));
     // 获取数据库到指定目录，
     // cd /data/zyep_pdctr/data;ftpput -uxxx -pxxx 172.16.70.13 auth.db
     QString cmd;
     cmd.append("cd ").append(dev[dev_set].rootdir).append("/");
     cmd.append(plat[plat_set].dir).append("_").append(dev[dev_set].type).append("/data");
-    cmd.append("&&ftpput -uxxx -pxxx ").append(_pcIP).append(" ").append(dbname);
+    // 判断文件是否存在
+    cmd.append("&&[ -f ").append(_dbname).append(" ]");
+    // 上传
+    cmd.append("&&ftpput -uxxx -pxxx ").append(_pcIP).append(" ").append(_dbname);
     _tel->ExeCommond(cmd);
 #endif
+}
+
+void MainWindow2::SlotSftpSta(SFTP_STA sta)
+{
+    switch (sta) {
+    case SFTP_STA_OK:
+        ui->sftp_msg->setText(tr("FTP启动成功"));
+        break;
+    case SFTP_STA_OPEN_FAILE:
+    default:
+        ui->sftp_msg->setText(tr("FTP启动失败"));
+        break;
+    }
+}
+
+void MainWindow2::SlotCftpEnd()
+{
+    qDebug() << "manwindow2 get cftp end";
+    // 只监听一次
+    disconnect(GlobalSignal::GetInstance(), SIGNAL(SigCftpEnd()), this, SLOT(SlotCftpEnd()));
     // 判断是否有文件
 
     // 创建新窗口，解析数据库，人脸下发情况体现
-    ViewDb* dbv = new ViewDb(this, dbname, dev[dev_set].devflag|plat[plat_set].platfalg);
+    ViewDb* dbv = new ViewDb(this, _dbname, dev[dev_set].devflag|plat[plat_set].platfalg);
     dbv->exec();
 }

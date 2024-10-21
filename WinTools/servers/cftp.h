@@ -13,7 +13,7 @@ class Cftp : public QObject
 {
     Q_OBJECT
 public:
-    explicit Cftp(QTcpSocket* sck = 0, QObject *parent = nullptr);
+    explicit Cftp(QTcpSocket* sck = 0, QObject* sftp=0, QObject *parent = nullptr);
     ~Cftp();
 
     void Reply(const QString &replyCode);
@@ -45,6 +45,8 @@ private:
     QTcpSocket* _dataSock;
     // 数据通道，上传或者下发的文件
     QFile* file;
+    // 记录ftp服务实例，ftp传输结束给一个回调
+    QObject* _sftp;
 
 };
 

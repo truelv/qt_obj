@@ -21,6 +21,7 @@ include(modTelnet/qttelnet.pri)
 
 SOURCES += \
     devselect.cpp \
+    globalsignal.cpp \
     item/checkboxinwidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -41,6 +42,7 @@ SOURCES += \
 
 HEADERS += \
     devselect.h \
+    globalsignal.h \
     item/checkboxinwidget.h \
     mainwindow.h \
     api\deviceInfo.h \

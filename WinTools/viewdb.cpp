@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QSqlQueryModel>
 #include "ui_defind.h"
+#include <QMessageBox>
 
 #define VDB_EOF -1
 
@@ -115,8 +116,15 @@ void ViewDb::closeEvent(QCloseEvent *event)
 
 void ViewDb::InitSql(int devtype, int dev)
 {
-    qDebug() << devtype << " " << dev;
     printf("<< 0x%x 0x%x\n", devtype, dev);
+    for (int i=0;;i++)
+    {
+        if (VDB_EOF==stbs[i].index)
+            break;
+        stbs[i].condition = NULL;
+        stbs[i].sql = NULL;
+    }
+
     // 主要是添加查询数据库的sql，和查询条件，
     // 先检查设备类型，如果还需要平台补充，就需要处理2次
     switch (devtype) {
@@ -124,13 +132,8 @@ void ViewDb::InitSql(int devtype, int dev)
     case SUP_DEV_DCTR_YT327L:
         // 修改stbs每个元素的 condition 和 sql
         stbs[1].condition = face_con;
-        stbs[2].condition = NULL;
-        stbs[3].condition = NULL;
-        stbs[4].condition = NULL;
 
         stbs[1].sql = "select accname,cardno,accnum,state,authstate,tmpauthstate,facestate from face_img_info";
-        stbs[2].sql = NULL;
-        stbs[3].sql = NULL;
         stbs[4].sql = "select * from LocalInfo";
 
         // 如果有条件，修改条件啊
@@ -138,14 +141,10 @@ void ViewDb::InitSql(int devtype, int dev)
         face_con[2].condition_sql = "where state!='0'";
         face_con[3].condition_sql = "where authstate='0'";
         break;
+    case SUP_DEV_READER_YT328:
+        stbs[4].sql = "select * from LocalInfo";
+        break;
     default:
-        stbs[1].condition = NULL;
-        stbs[2].condition = NULL;
-        stbs[3].condition = NULL;
-
-        stbs[1].sql = NULL;
-        stbs[2].sql = NULL;
-        stbs[3].sql = NULL;
         break;
     }
 }
@@ -192,6 +191,11 @@ void ViewDb::on_s_tb_currentIndexChanged(int index)
 void ViewDb::on_bt_check_clicked()
 {
     // 点击按键，根据选择的查询语句和条件情况，查询数据库
+    if (NULL==stbs[stbs_index].sql)
+    {
+        QMessageBox::warning(this, tr("错误"), tr("无有效操作"));
+        return ;
+    }
     // 获取数据
     QString sql;
     sql.append(stbs[stbs_index].sql).append(" ");
