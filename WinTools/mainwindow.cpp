@@ -18,7 +18,8 @@
 
 MainWindow* MainWindow::itent = NULL;
 
-typedef struct {
+typedef struct
+{
     LINK_NODE node;
     int index;
     DEVICE_BASE_INFO dinfo;
@@ -30,7 +31,7 @@ typedef struct {
 } DEVICE_INFO_NODE;
 // 定义一个链表维护设备
 static LINK_HEAD* hdevinfo = nullptr;
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -47,29 +48,32 @@ MainWindow::MainWindow(QWidget *parent)
     ui->prot_v->setText(QString("%1.%2.%3").arg(PROT_VMAJOR).arg(PROT_VMINOR).arg(PROT_VPACK));
     ui->progress_status->setValue(0);
 
-    connect(this, SIGNAL(sig_progress_update(int, int)), this, SLOT(slot_progress_update(int,int)));
+    connect(this, SIGNAL(sig_progress_update(int, int)), this, SLOT(slot_progress_update(int, int)));
 }
 
 MainWindow::~MainWindow()
 {
-    if (nullptr!=hdevinfo) {
+    if(nullptr != hdevinfo)
+    {
         free_linkedlist(hdevinfo);
         hdevinfo = nullptr;
     }
     delete ui;
 }
 
-void MainWindow::apandeLogs(const QString &text)
+void MainWindow::apandeLogs(const QString& text)
 {
-    if (ui->textBrowser->toPlainText().size()>1024)
+    if(ui->textBrowser->toPlainText().size() > 1024)
+    {
         ui->textBrowser->clear();
+    }
     ui->textBrowser->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
-    ui->textBrowser->insertPlainText(QDateTime::currentDateTime().toString("[yy-MM-dd hh:mm:ss] ")+text+"\n");
+    ui->textBrowser->insertPlainText(QDateTime::currentDateTime().toString("[yy-MM-dd hh:mm:ss] ") + text + "\n");
     QScrollBar* vroll = ui->textBrowser->verticalScrollBar();
     vroll->setSliderPosition(vroll->maximum());
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event)
     updateScanButton();
@@ -83,9 +87,9 @@ void MainWindow::updateScanButton()
     //    return ;
     int width = 100;
     QFont ft;
-    ft.setPixelSize(static_cast<int>(width*0.2));
+    ft.setPixelSize(static_cast<int>(width * 0.2));
     //qDebug() << "width " << width;
-    int height = static_cast<int>(width*0.4);
+    int height = static_cast<int>(width * 0.4);
 
     //ui->scanButton->setMinimumWidth(width);
     //ui->scanButton->setMaximumWidth(width);
@@ -117,10 +121,10 @@ void MainWindow::updateScanButton()
     //ui->upButton->setMaximumWidth(width);
     ui->upButton->setMinimumHeight(height);
     ui->upButton->setMaximumHeight(height);
-#if 0
+    #if 0
     width = ui->updateButton->width();
-    ft.setPixelSize(static_cast<int>(width*0.2));
-    ui->updateButton->setMinimumHeight(static_cast<int>(width*0.4));
+    ft.setPixelSize(static_cast<int>(width * 0.2));
+    ui->updateButton->setMinimumHeight(static_cast<int>(width * 0.4));
     ui->updateButton->setFont(ft);
 
     ui->logButton->setMinimumHeight(height);
@@ -128,29 +132,34 @@ void MainWindow::updateScanButton()
 
     ui->shellButton->setMinimumHeight(height);
     ui->shellButton->setFont(ft);
-#endif
+    #endif
 }
 
 void MainWindow::updateTable()
 {
-    if (nullptr==hdevinfo)
+    if(nullptr == hdevinfo)
+    {
         return ;
+    }
     DEVICE_INFO_NODE* pdinfo = nullptr;
     DEVICE_BASE_INFO* pinfo = nullptr;
     LINK_NODE* pnode = nullptr;
 
     ui->devinfo->setRowCount(hdevinfo->nodecount);
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
         pinfo = &pdinfo->dinfo;
         qDebug() << "index " << pdinfo->index;
 
         CheckboxInWidget* checkbox = new CheckboxInWidget;
         qDebug() << "checkbox addr " << checkbox;
-        checkbox->setCheckProperty("node", (int)pdinfo);
+        checkbox->setCheckProperty("node", reinterpret_cast<uintptr_t>(pdinfo));
         checkbox->setCheckboxSlot(this, SLOT(checkboxChange(int)));
-        if (pdinfo->checked)
+        if(pdinfo->checked)
+        {
             checkbox->setCheckboxChecked(true);
+        }
         pdinfo->obj = checkbox;
 
         ui->devinfo->setCellWidget(pdinfo->index, 0, checkbox);
@@ -168,29 +177,31 @@ void MainWindow::clearTableData()
 {
     DEVICE_INFO_NODE* pdinfo = nullptr;
     LINK_NODE* pnode = nullptr;
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
         pdinfo->obj->deleteLater();
     }
     CLEAR_LKLIST(hdevinfo, DEVICE_INFO_NODE, node);
 }
 
-int MainWindow::handRsp(char *rsp, int len)
+int MainWindow::handRsp(char* rsp, int len)
 {
     qDebug() << "recv msg " << rsp << ", len " << len;
     // 拆解消息，格式化数据入链表
     DEV_CMD_RSP* prsp = (DEV_CMD_RSP*)rsp;
-    switch (prsp->cmd.base.code) {
-    case CMD_RSP_CODE_OK:
-    case CMD_RSP_CODE_REDY:
-        //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
-        itent->apandeLogs("找到设备 "+QString(prsp->cmd.devbinfo.sn));
-        break;
-    default:
-        //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
-        itent->apandeLogs(QString(cmd_to_string((int)prsp->cmd.base.cmd))+" 执行失败，错误原因："
-                          +QString(cmd_rsp_code_to_string(prsp->cmd.base.code)));
-        break;
+    switch(prsp->cmd.base.code)
+    {
+        case CMD_RSP_CODE_OK:
+        case CMD_RSP_CODE_REDY:
+            //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令成功被接收";
+            itent->apandeLogs("找到设备 " + QString(prsp->cmd.devbinfo.sn));
+            break;
+        default:
+            //qDebug() << (int)(prsp->cmd.base.cmd) << " 命令接收失败，错误码 " << prsp->cmd.base.code;
+            itent->apandeLogs(QString(cmd_to_string((int)prsp->cmd.base.cmd)) + " 执行失败，错误原因："
+                              + QString(cmd_rsp_code_to_string(prsp->cmd.base.code)));
+            break;
     }
 
     DEVICE_INFO_NODE* info = new DEVICE_INFO_NODE;
@@ -231,13 +242,15 @@ void MainWindow::on_updateButton_clicked()
 
     //qDebug() << filenames << " " << filenames.length();
 
-    if (filenames.length()<1) {
+    if(filenames.length() < 1)
+    {
         msgbox.setText(tr("没有选择文件"));
         msgbox.exec();
         return ;
     }
 
-    if (hdevinfo->nodecount<=0) {
+    if(hdevinfo->nodecount <= 0)
+    {
         msgbox.setText(tr("没有找到设备"));
         msgbox.exec();
         return ;
@@ -246,17 +259,21 @@ void MainWindow::on_updateButton_clicked()
     DEVICE_INFO_NODE* pdinfo = nullptr;
     LINK_NODE* pnode = nullptr;
     char flag = 0;
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
-        if (0==pdinfo->checked)
+        if(0 == pdinfo->checked)
+        {
             continue;
+        }
         flag = 1;
         updateDevice(filenames[0].toUtf8(), &pdinfo->dinfo);
         //
         usleep(30000);
     }
 
-    if (0==flag) {
+    if(0 == flag)
+    {
         msgbox.setText(tr("没有选中设备"));
         msgbox.exec();
     }
@@ -268,7 +285,7 @@ void MainWindow::checkboxChange(int state)
     QObject* ob = sender();
     int nodeaddr = ob->property("node").toInt();
     DEVICE_INFO_NODE* dinfo = (DEVICE_INFO_NODE*)nodeaddr;
-    dinfo->checked = dinfo->checked?0:1;
+    dinfo->checked = dinfo->checked ? 0 : 1;
     qDebug() << "选中";
 }
 
@@ -280,13 +297,15 @@ void MainWindow::on_logButton_clicked()
     const QStringList& filenames = fdialog.selectedFiles();
     qDebug() << filenames << " " << filenames.length();
 
-    if (filenames.length()<1) {
+    if(filenames.length() < 1)
+    {
         msgbox.setText(tr("没有选择文件夹"));
         msgbox.exec();
         return ;
     }
 
-    if (hdevinfo->nodecount<=0) {
+    if(hdevinfo->nodecount <= 0)
+    {
         msgbox.setText(tr("没有找到设备"));
         msgbox.exec();
         return ;
@@ -295,17 +314,21 @@ void MainWindow::on_logButton_clicked()
     DEVICE_INFO_NODE* pdinfo = nullptr;
     LINK_NODE* pnode = nullptr;
     char flag = 0;
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
-        if (0==pdinfo->checked)
+        if(0 == pdinfo->checked)
+        {
             continue;
+        }
         flag = 1;
         getDevlog(filenames[0].toUtf8(), &pdinfo->dinfo);
         //
         usleep(30000);
     }
 
-    if (0==flag) {
+    if(0 == flag)
+    {
         msgbox.setText(tr("没有选中设备"));
         msgbox.exec();
     }
@@ -314,7 +337,8 @@ void MainWindow::on_logButton_clicked()
 // 重启选中设备
 void MainWindow::on_rebootButton_clicked()
 {
-    if (hdevinfo->nodecount<=0) {
+    if(hdevinfo->nodecount <= 0)
+    {
         msgbox.setText(tr("没有找到设备"));
         msgbox.exec();
         return ;
@@ -323,17 +347,21 @@ void MainWindow::on_rebootButton_clicked()
     DEVICE_INFO_NODE* pdinfo = nullptr;
     LINK_NODE* pnode = nullptr;
     char flag = 0;
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
-        if (0==pdinfo->checked)
+        if(0 == pdinfo->checked)
+        {
             continue;
+        }
         flag = 1;
         devReboot(&pdinfo->dinfo);
         //
         usleep(30000);
     }
 
-    if (0==flag) {
+    if(0 == flag)
+    {
         msgbox.setText(tr("没有选中设备"));
         msgbox.exec();
     }
@@ -349,13 +377,15 @@ void MainWindow::on_upButton_clicked()
 
     //qDebug() << filenames << " " << filenames.length();
 
-    if (filenames.length()<1) {
+    if(filenames.length() < 1)
+    {
         msgbox.setText(tr("没有选择文件"));
         msgbox.exec();
         return ;
     }
 
-    if (hdevinfo->nodecount<=0) {
+    if(hdevinfo->nodecount <= 0)
+    {
         msgbox.setText(tr("没有找到设备"));
         msgbox.exec();
         return ;
@@ -364,17 +394,21 @@ void MainWindow::on_upButton_clicked()
     DEVICE_INFO_NODE* pdinfo = nullptr;
     LINK_NODE* pnode = nullptr;
     char flag = 0;
-    FOREACH_LKLIST(hdevinfo, pnode) {
+    FOREACH_LKLIST(hdevinfo, pnode)
+    {
         pdinfo = (DEVICE_INFO_NODE*)pnode;
-        if (0==pdinfo->checked)
+        if(0 == pdinfo->checked)
+        {
             continue;
+        }
         flag = 1;
         upServer(filenames[0].toUtf8(), &pdinfo->dinfo);
         //
         usleep(30000);
     }
 
-    if (0==flag) {
+    if(0 == flag)
+    {
         msgbox.setText(tr("没有选中设备"));
         msgbox.exec();
     }
@@ -383,7 +417,9 @@ void MainWindow::on_upButton_clicked()
 void MainWindow::slot_progress_update(int index, int count)
 {
     qDebug() << index << " " << count;
-    if (0==index)
+    if(0 == index)
+    {
         ui->progress_status->setRange(0, count);
+    }
     ui->progress_status->setValue(index);
 }

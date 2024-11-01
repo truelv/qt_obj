@@ -9,8 +9,8 @@
 //#define FTP_ROOT "C:\\Users\\40428\\Desktop\\"
 #define FTP_ROOT "\\file\\"
 
-Cftp::Cftp(QTcpSocket *sck, QObject *sftp, QObject *parent) : QObject(parent), _sck(sck),
-    _logined(false),_dataSock(nullptr),file(nullptr),_sftp(sftp)
+Cftp::Cftp(QTcpSocket* sck, QObject* sftp, QObject* parent) : QObject(parent), _sck(sck),
+    _logined(false), _dataSock(nullptr), file(nullptr), _sftp(sftp)
 {
     // 客户端连接建立后，监听连接状态和命令
     connect(_sck, SIGNAL(disconnected()), this, SLOT(SlotConnectlost()));
@@ -27,12 +27,12 @@ Cftp::Cftp(QTcpSocket *sck, QObject *sftp, QObject *parent) : QObject(parent), _
 Cftp::~Cftp()
 {
     // 如果已经建立数据通道，需要回收
-    if (nullptr!=file)
+    if(nullptr != file)
     {
         delete file;
         file = nullptr;
     }
-    if (nullptr!=_dataSock)
+    if(nullptr != _dataSock)
     {
         _dataSock->close();
         _dataSock = nullptr;
@@ -48,23 +48,27 @@ Cftp::~Cftp()
     _sck->close();
 }
 
-void Cftp::Reply(const QString &replyCode)
+void Cftp::Reply(const QString& replyCode)
 {
-    _sck->write((replyCode+"\r\n").toUtf8());
+    _sck->write((replyCode + "\r\n").toUtf8());
 }
 
 void Cftp::SlotConnectlost()
 {
     qDebug() << "ftp disconnect";
-    if (nullptr!=_sftp)
+    if(nullptr != _sftp)
+    {
         qobject_cast<STftpd*>(_sftp)->CFtpDisConnect();
+    }
     deleteLater();
 }
 
 void Cftp::SlotReadready()
 {
-    if (!_sck->canReadLine())
+    if(!_sck->canReadLine())
+    {
         return ;
+    }
     const QByteArray& ba = _sck->readLine().trimmed();
     // 解析命令
     ParseCommond(ba);
@@ -84,16 +88,19 @@ void Cftp::SlotDataConnect()
 
 void Cftp::SlotRecvdata()
 {
-    const QByteArray &bytes = _dataSock->readAll();
+    const QByteArray& bytes = _dataSock->readAll();
     int bytesWritten = file->write(bytes);
     //qDebug() << "recv " << bytes;
 }
 
 void Cftp::SlotSendFrameOK(qint64 bytes)
 {
-    if (!file->atEnd()) {
+    if(!file->atEnd())
+    {
         _dataSock->write(file->read(bytes));
-    } else {
+    }
+    else
+    {
         _dataSock->disconnectFromHost();
     }
 }
@@ -115,7 +122,7 @@ void Cftp::SlotAborddata()
     Reply("226 Closing data connection.");
 }
 
-void Cftp::ParseCommond(const QString &cmd)
+void Cftp::ParseCommond(const QString& cmd)
 {
     qDebug() << cmd;
     QString cmdstr;
@@ -123,100 +130,164 @@ void Cftp::ParseCommond(const QString &cmd)
 
     parseCommand(cmd, &cmdstr, &args);
 
-    if ("USER" == cmdstr) {
+    if("USER" == cmdstr)
+    {
         Reply("331 User name OK, need password.");
         return ;
-    } else if ("PASS" == cmdstr) {
+    }
+    else if("PASS" == cmdstr)
+    {
         _logined = true;
         Reply("230 You are logged in.");
         return ;
     }
 
-    if (!_logined)
+    if(!_logined)
     {
         qDebug() << "need login first";
         Reply("530 You must log in first.");
         return ;
     }
 
-    if ("QUIT" == cmdstr) {
+    if("QUIT" == cmdstr)
+    {
         Reply("221 Quitting...");
-#if 0
-        if (nullptr!=_sftp)
+        #if 0
+        if(nullptr != _sftp)
+        {
             qobject_cast<STftpd*>(_sftp)->CFtpQuit();
-#endif
-    } else if ("AUTH" == cmdstr && "TLS" == args.toUpper()) {
+        }
+        #endif
+    }
+    else if("AUTH" == cmdstr && "TLS" == args.toUpper())
+    {
         //auth();
-    } else if ("FEAT" == cmdstr) {
+    }
+    else if("FEAT" == cmdstr)
+    {
         //feat();
-    } else if ("PWD" == cmdstr) {
-    } else if ("CWD" == cmdstr) {
-    } else if ("TYPE" == cmdstr) {
+    }
+    else if("PWD" == cmdstr)
+    {
+    }
+    else if("CWD" == cmdstr)
+    {
+    }
+    else if("TYPE" == cmdstr)
+    {
         Reply("200 cmdstr okay.");
-    } else if ("PORT" == cmdstr) {
-    } else if ("PASV" == cmdstr) {
+    }
+    else if("PORT" == cmdstr)
+    {
+    }
+    else if("PASV" == cmdstr)
+    {
         // 启用数据通道的监听，并且告诉客户端，监听的端口和地址
         _dataServer->close();
         _dataServer->listen();
         int port = _dataServer->serverPort();
         // 告诉客户端，将从这个地址发送数据
-        Reply(QString("227 Entering Passive Mode (%1,%2,%3).").arg(_sck->localAddress().toString()).arg(port/256).arg(port%256));
-    } else if ("LIST" == cmdstr) {
-    } else if ("RETR" == cmdstr) {
+        Reply(QString("227 Entering Passive Mode (%1,%2,%3).").arg(_sck->localAddress().toString()).arg(port / 256).arg(port % 256));
+    }
+    else if("LIST" == cmdstr)
+    {
+    }
+    else if("RETR" == cmdstr)
+    {
         // 打开文件
-        file = new QFile(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
+        file = new QFile(QCoreApplication::applicationDirPath() + FTP_ROOT + args);
         file->open(QIODevice::ReadWrite);
         // 告诉客户端，数据已经准备好了
         Reply("150 File status okay; about to open data connection.");
         // 先写一段数据
-        SlotSendFrameOK(128*1024);
-    } else if ("REST" == cmdstr) {
-    } else if ("NLST" == cmdstr) {
-    } else if ("SIZE" == cmdstr) {
-        QFileInfo fi(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
-        if (!fi.exists() || fi.isDir()) {
+        SlotSendFrameOK(128 * 1024);
+    }
+    else if("REST" == cmdstr)
+    {
+    }
+    else if("NLST" == cmdstr)
+    {
+    }
+    else if("SIZE" == cmdstr)
+    {
+        QFileInfo fi(QCoreApplication::applicationDirPath() + FTP_ROOT + args);
+        if(!fi.exists() || fi.isDir())
+        {
             Reply("550 Requested action not taken; file unavailable.");
             return ;
         }
         // 告诉客户端，文件大小
         Reply(QString("213 %1").arg(fi.size()));
-    } else if ("SYST" == cmdstr) {
-    } else if ("PROT" == cmdstr) {
-    } else if ("CDUP" == cmdstr) {
-    } else if ("OPTS" == cmdstr && "UTF8 ON" == args.toUpper()) {
-    } else if ("PBSZ" == cmdstr && "0" == args.toUpper()) {
-    } else if ("NOOP" == cmdstr) {
-    } else if ("STOR" == cmdstr) {
+    }
+    else if("SYST" == cmdstr)
+    {
+    }
+    else if("PROT" == cmdstr)
+    {
+    }
+    else if("CDUP" == cmdstr)
+    {
+    }
+    else if("OPTS" == cmdstr && "UTF8 ON" == args.toUpper())
+    {
+    }
+    else if("PBSZ" == cmdstr && "0" == args.toUpper())
+    {
+    }
+    else if("NOOP" == cmdstr)
+    {
+    }
+    else if("STOR" == cmdstr)
+    {
         // 上传文件
         // 从socket读取数据保存文件
         // args是文件的名字，可能带路径
-        if (args.contains("/"))
+        if(args.contains("/"))
+        {
             args = args.split("/").last();
+        }
         // 打开文件
-        qDebug() << QCoreApplication::applicationDirPath()+FTP_ROOT+args;
-        file = new QFile(QCoreApplication::applicationDirPath()+FTP_ROOT+args);
+        qDebug() << QCoreApplication::applicationDirPath() + FTP_ROOT + args;
+        file = new QFile(QCoreApplication::applicationDirPath() + FTP_ROOT + args);
         file->open(QIODevice::ReadWrite);
         // 回复文件已经准备好了
         Reply("150 File status okay; about to open data connection.");
-    } else if ("MKD" == cmdstr) {
-    } else if ("RMD" == cmdstr) {
-    } else if ("DELE" == cmdstr) {
-    } else if ("RNFR" == cmdstr) {
-    } else if ("RNTO" == cmdstr) {
-    } else if ("APPE" == cmdstr) {
-    } else {
+    }
+    else if("MKD" == cmdstr)
+    {
+    }
+    else if("RMD" == cmdstr)
+    {
+    }
+    else if("DELE" == cmdstr)
+    {
+    }
+    else if("RNFR" == cmdstr)
+    {
+    }
+    else if("RNTO" == cmdstr)
+    {
+    }
+    else if("APPE" == cmdstr)
+    {
+    }
+    else
+    {
         Reply("502 cmdstr not implemented.");
     }
 }
 
-void Cftp::parseCommand(const QString &entirecmdstr, QString *cmdstr, QString *cmdstrParameters)
+void Cftp::parseCommand(const QString& entirecmdstr, QString* cmdstr, QString* cmdstrParameters)
 {
     // Split parameters and cmdstr.
     int pos = entirecmdstr.indexOf(' ');
-    if (-1 != pos) {
+    if(-1 != pos)
+    {
         *cmdstr = entirecmdstr.left(pos).trimmed().toUpper();
-        *cmdstrParameters = entirecmdstr.mid(pos+1).trimmed();
-    } else {
+        *cmdstrParameters = entirecmdstr.mid(pos + 1).trimmed();
+    }
+    else
+    {
         *cmdstr = entirecmdstr.trimmed().toUpper();
     }
 }

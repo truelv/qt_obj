@@ -20,10 +20,12 @@ typedef struct {
 // devflag
 #define SUP_DEV_DCTR_YT328      0x01
 #define SUP_DEV_DCTR_YT327L     0x02
-#define SUP_DEV_YT216           0x04
-#define SUP_DEV_READER_YT328    0x08
-#define SUP_DEV_CONTRL_YT312    0x10
-#define SUP_DEV_TK_YT312    0x20
+#define SUP_DEV_READER_YT328    0x04
+#define SUP_DEV_CONTRL_YT312    0x08
+#define SUP_DEV_TK_YT312        0x10
+#define SUP_DEV_YT213           0x20
+#define SUP_DEV_YT215           0x40
+#define SUP_DEV_YT216           0x80
 
 typedef struct {
     int num;
